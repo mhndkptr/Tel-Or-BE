@@ -15,7 +15,7 @@ services:
       - telor-network
 
   telor-api:
-    image: hendika/apps/telor-api:latest
+    image: hendika/telor-api:latest
     container_name: telor-api
     restart: always
     ports:
