@@ -76,7 +76,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
           script: |
-            cd /home/apps/telor-api
+            cd apps/telor-api
             git reset --hard HEAD
             git pull origin main --rebase
             docker compose down
