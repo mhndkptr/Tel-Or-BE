@@ -1,0 +1,85 @@
+name: Build and Deploy Automation
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 23
+        uses: actions/setup-java@v4
+        with:
+          java-version: "23"
+          distribution: "temurin"
+          cache: maven
+      - name: Load variables
+        run: |
+          touch .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }} >> .env
+          echo JWT_REFRESH_EXPIRATION=${{ secrets.JWT_REFRESH_EXPIRATION }} >> .env
+          echo SERVER_PORT=${{ secrets.SERVER_PORT }} >> .env
+          echo SERVER_SECURITY_USERNAME=${{ secrets.SERVER_SECURITY_USERNAME }} >> .env
+          echo SERVER_SECURITY_PASSWORD=${{ secrets.SERVER_SECURITY_PASSWORD }} >> .env
+
+          cat .env
+          echo "Environment variables loaded."
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: target/telor-0.0.1-SNAPSHOT.jar
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jar
+
+      - name: Move JAR to target folder
+        run: |
+          mkdir -p target
+          mv telor-0.0.1-SNAPSHOT.jar target/
+
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: hendika/apps/telor-api
+          tags: latest
+          registry: docker.io
+          dockerfile: Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Deploy app
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
+          script: |
+            cd /home/apps/telor-api
+            git reset --hard HEAD
+            git pull origin main --rebase
+            docker compose down
+            docker compose pull
+            docker compose up -d
+            docker system prune -f
