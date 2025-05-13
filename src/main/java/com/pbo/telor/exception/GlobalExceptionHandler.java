@@ -33,7 +33,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> handleNotFound(NotFoundException ex) {
         return ResponseUtil.error(
             HttpStatus.NOT_FOUND,
-            "NOT_FOUND",
             ex.getMessage()
         );
     }
@@ -59,7 +58,6 @@ public class GlobalExceptionHandler {
 
         return ResponseUtil.error(
             HttpStatus.INTERNAL_SERVER_ERROR,
-            "INTERNAL_SERVER_ERROR",
             finalMessage
         );
     }
@@ -134,7 +132,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
         return ResponseUtil.error(
             HttpStatus.METHOD_NOT_ALLOWED,
-            "METHOD_NOT_ALLOWED",
             "Request method '" + ex.getMethod() + "' not supported for this endpoint"
         );
     }
@@ -143,7 +140,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> handleNotFound(NoHandlerFoundException ex) {
         return ResponseUtil.error(
             HttpStatus.NOT_FOUND,
-            "NOT_FOUND",
             "Endpoint not found: " + ex.getRequestURL()
         );
     }
