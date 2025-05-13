@@ -1,6 +1,6 @@
 # 🥚 Telor API
 
-Telor API is a Spring Boot-based RESTful API deployed using Docker on VPS and accessed via a custom domain `api.telor.muhhendikaputra.my.id` with SSL from Let's Encrypt.
+Telor API is a Spring Boot-based RESTful API deployed using Docker on VPS and accessed via a custom domain [api.telor.muhhendikaputra.my.id](https://api.telor.muhhendikaputra.my.id) with SSL from Let's Encrypt.
 
 ---
 
