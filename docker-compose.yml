@@ -1,5 +1,5 @@
 services:
-  db:
+  telor-db:
     image: postgres:15
     container_name: telor-db
     restart: always
@@ -22,6 +22,8 @@ services:
       - "3636:3636"
     env_file:
       - .env
+    depends_on:
+      - telor-db
     networks:
       - telor-network
 
