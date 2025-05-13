@@ -55,4 +55,13 @@ public class ResponseUtil {
                 .error(new ErrorResponse(errorName, message, null))
                 .build());
     }
+
+    public static <T> ResponseEntity<BaseResponse<T>> error(HttpStatus status, String message) {
+        return ResponseEntity.status(status)
+            .body(BaseResponse.<T>builder()
+                .status(status.value())
+                .code(status.name())
+                .message(message) 
+                .build());
+    }
 }
