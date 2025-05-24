@@ -2,7 +2,7 @@ services:
   telor-db:
     image: postgres:15
     container_name: telor-db
-    restart: always
+    restart: on-failure:5
     env_file:
       - .env
     environment:
@@ -17,7 +17,7 @@ services:
   telor-api:
     image: mhndkptr/telor-api:latest
     container_name: telor-api
-    restart: always
+    restart: on-failure:5
     ports:
       - "3636:3636"
     env_file:
