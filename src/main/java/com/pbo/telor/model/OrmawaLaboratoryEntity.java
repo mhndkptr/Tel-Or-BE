@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrmawaLaboratoryEntity extends OrmawaEntity {
 
-    @NotBlank(message = "Laboratory type is required")
+    @NotNull(message = "Laboratory type is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LabType labType;

@@ -2,6 +2,7 @@ package com.pbo.telor.service;
 
 import com.pbo.telor.model.UserEntity;
 import com.pbo.telor.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-@Table(name = "ormawa_community")
+@Table(name = "ormawa_organization")
 @Builder
 @Data
 @EqualsAndHashCode(callSuper = true)

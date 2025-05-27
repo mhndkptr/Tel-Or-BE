@@ -10,8 +10,11 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "ormawa")
+@Inheritance(strategy = InheritanceType.JOINED) 
 public abstract  class OrmawaEntity {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -40,7 +44,7 @@ public abstract  class OrmawaEntity {
     @Column(nullable = false)
     private String content;
 
-    @NotBlank(message = "IsOpenRegistration is required")
+    @NotNull(message = "IsOpenRegistration is required")
     @Column(nullable = false, unique = true)
     private boolean isOpenRegistration;
 
@@ -50,9 +54,9 @@ public abstract  class OrmawaEntity {
 
     @NotBlank(message = "Background is required")
     @Column(nullable = false, unique = true)
-    private boolean background;
+    private String background;
 
-    @NotBlank(message = "Category must be selected")
+    @NotNull(message = "Category must be selected")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category category;
