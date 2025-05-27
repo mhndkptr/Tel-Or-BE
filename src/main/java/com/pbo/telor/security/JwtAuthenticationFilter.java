@@ -53,14 +53,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (authService.isTokenBlacklisted(token)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Token is blacklisted");
+                response.getWriter().write(
+                    new ObjectMapper().writeValueAsString(
+                        ResponseUtil.error(HttpStatus.UNAUTHORIZED,  "Token is blacklisted").getBody()
+                    )
+                );
                 return;
             }
 
             username = jwtUtil.extractUsername(token);
         } catch (ExpiredJwtException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token expired");
+            response.getWriter().write(
+                new ObjectMapper().writeValueAsString(
+                    ResponseUtil.error(HttpStatus.UNAUTHORIZED,  "Token expired").getBody()
+                )
+            );
             return;
         } catch (Exception e) {
             System.out.println("❌ Token validation failed: " + e.getMessage());
