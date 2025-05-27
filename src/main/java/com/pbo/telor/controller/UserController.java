@@ -4,6 +4,7 @@ package com.pbo.telor.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.pbo.telor.dto.common.BaseResponse;
@@ -25,6 +26,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<List<UserResponse>>> getUsersPaged(
         @RequestParam(value = "page", defaultValue = "0") Integer page,
         @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
@@ -50,6 +52,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<UserResponse>> create(@Valid @ModelAttribute UserEntity user) {
         UserResponse created = userService.create(user);
         return ResponseUtil.ok(created, "User created successfully");

@@ -1,7 +1,6 @@
 package com.pbo.telor.exception;
 
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +14,10 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -44,6 +47,26 @@ public class GlobalExceptionHandler {
             "TYPE_MISMATCH",
             "Parameter type mismatch: " + ex.getMessage()
         );
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<BaseResponse<Object>> handleUsernameNotFound(UsernameNotFoundException ex) {
+        return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "USER_NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<BaseResponse<Object>> handleBadCredentials(BadCredentialsException ex) {
+        return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "Email or password is incorrect");
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<BaseResponse<Object>> handleAuthenticationException(AuthenticationException ex) {
+        return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "Authentication required");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<BaseResponse<Object>> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseUtil.error(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "You do not have permission to access this resource");
     }
 
     @ExceptionHandler(Exception.class)
