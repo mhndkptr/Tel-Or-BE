@@ -15,7 +15,9 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -56,6 +58,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<BaseResponse<Object>> handleBadCredentials(BadCredentialsException ex) {
         return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "Email or password is incorrect");
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<BaseResponse<Object>> handleAuthenticationException(AuthenticationException ex) {
+        return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "Authentication required");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<BaseResponse<Object>> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseUtil.error(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "You do not have permission to access this resource");
     }
 
     @ExceptionHandler(Exception.class)
