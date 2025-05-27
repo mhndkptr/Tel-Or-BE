@@ -4,16 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 
 public class AuthRequest {
     public record LoginRequest(
-        @NotBlank String email,
-        @NotBlank String password
+        @NotBlank(message = "Email is required") String email,
+        @NotBlank(message = "Password is required") String password
     ) {}
 
     public record RefreshTokenRequest(
-        @NotBlank String refreshToken
+        @NotBlank(message = "Refresh token is required") String refreshToken
     ) {}
 
     public record LogoutRequest(
-        @NotBlank String refreshToken
+        @NotBlank(message = "Refresh token is required") String refreshToken
     ) {}
 }
-

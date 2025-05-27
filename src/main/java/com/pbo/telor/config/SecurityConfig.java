@@ -1,10 +1,12 @@
 package com.pbo.telor.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pbo.telor.model.UserEntity.Role;
 import com.pbo.telor.security.JwtAuthenticationFilter;
+import com.pbo.telor.service.AuthService;
+import com.pbo.telor.utils.JwtUtil;
 import com.pbo.telor.utils.ResponseUtil;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,7 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter) throws Exception {
         http

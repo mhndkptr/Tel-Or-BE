@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
 
+@Table(name = "token_blacklist")
 @Entity
 @Data
 @NoArgsConstructor
