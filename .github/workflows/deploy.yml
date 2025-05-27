@@ -25,6 +25,7 @@ jobs:
           touch .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }} >> .env
+          echo JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }} >> .env
           echo JWT_REFRESH_EXPIRATION=${{ secrets.JWT_REFRESH_EXPIRATION }} >> .env
           echo SERVER_PORT=${{ secrets.SERVER_PORT }} >> .env
           echo SERVER_SECURITY_USERNAME=${{ secrets.SERVER_SECURITY_USERNAME }} >> .env
