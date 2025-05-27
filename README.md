@@ -62,6 +62,7 @@ Follow these steps to run the API locally:
 
       JWT_SECRET=[your_jwt_secret_key]
       JWT_EXPIRATION=[jwt_expiration_time_in_milliseconds]
+      JWT_REFRESH_SECRET=[your_jwt_refresh_secret_key]
       JWT_REFRESH_EXPIRATION=[jwt_refresh_expiration_time_in_milliseconds]
 
       SERVER_PORT=[your_preferred_server_port]
@@ -87,7 +88,7 @@ To build a production-ready JAR file of your application, follow these steps:
 1.  Navigate to the project root directory in your terminal.
 2.  Run the Maven build command:
     ```bash
-    mvn clean package
+    mvn clean install
     ```
 3.  Once the build is successful, the JAR file will be located in the `target` directory. The filename will typically be `telor-[version].jar`.
 
