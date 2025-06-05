@@ -19,13 +19,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.pbo.telor.enums.OrmawaCategory;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "ormawa")
-@Inheritance(strategy = InheritanceType.JOINED) 
-public abstract  class OrmawaEntity {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class OrmawaEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -59,12 +61,6 @@ public abstract  class OrmawaEntity {
     @NotNull(message = "Category must be selected")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Category category;
+    private OrmawaCategory category;
 
-    public enum Category {
-        LABORATORY,
-        COMMUNITY,
-        ORGANIZATION,
-        UKM
-    }
 }
