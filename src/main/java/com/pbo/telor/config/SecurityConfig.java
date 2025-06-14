@@ -1,8 +1,6 @@
 package com.pbo.telor.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pbo.telor.security.JwtAuthenticationFilter;
-import com.pbo.telor.utils.ResponseUtil;
+import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +20,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pbo.telor.security.JwtAuthenticationFilter;
+import com.pbo.telor.utils.ResponseUtil;
 
 @Configuration
 @EnableMethodSecurity
@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/v1/users/**").hasAnyRole("ADMIN", "ORGANIZER")
+                        .requestMatchers("/api/v1/ormawa/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint())

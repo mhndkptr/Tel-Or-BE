@@ -23,7 +23,7 @@ public class OpenApiConfig {
         ._enum(List.of("v1", "v2"));
 
     Server localServer = new Server()
-        .url("http://localhost:4646/api/{version}")
+        .url("http://localhost:4646")
         .description("Local Server")
         .variables(new ServerVariables().addServerVariable("version", versionVariable));
 
