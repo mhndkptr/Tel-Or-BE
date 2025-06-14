@@ -27,26 +27,26 @@ import com.pbo.telor.utils.ResponseUtil;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/api/v1/faqs/**").permitAll()
-                .requestMatchers("/api/v1/events/**").permitAll()
-                .requestMatchers("/api/v1/users/**").hasAnyRole("ADMIN", "ORGANIZER")
-                .requestMatchers("/api/v1/ormawa/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(customAuthenticationEntryPoint())
-                .accessDeniedHandler(customAccessDeniedHandler())
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/faqs/**").permitAll()
+                        .requestMatchers("/api/v1/events/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/v1/users/**").hasAnyRole("ADMIN", "ORGANIZER")
+                        .requestMatchers("/api/v1/ormawa/**").permitAll()
+                        .anyRequest().authenticated())
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint())
+                        .accessDeniedHandler(customAccessDeniedHandler()))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -63,9 +63,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); 
+        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // tanpa wildcard dan tanpa path
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Client-Type"));
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -79,10 +80,8 @@ public class SecurityConfig {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json");
             response.getWriter().write(
-                new ObjectMapper().writeValueAsString(
-                    ResponseUtil.error(HttpStatus.UNAUTHORIZED, "Authentication required").getBody()
-                )
-            );
+                    new ObjectMapper().writeValueAsString(
+                            ResponseUtil.error(HttpStatus.UNAUTHORIZED, "Authentication required").getBody()));
         };
     }
 
@@ -92,10 +91,9 @@ public class SecurityConfig {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType("application/json");
             response.getWriter().write(
-                new ObjectMapper().writeValueAsString(
-                    ResponseUtil.error(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "You do not have permission to access this resource").getBody()
-                )
-            );
+                    new ObjectMapper().writeValueAsString(
+                            ResponseUtil.error(HttpStatus.FORBIDDEN, "ACCESS_DENIED",
+                                    "You do not have permission to access this resource").getBody()));
         };
     }
 }

@@ -30,4 +30,8 @@ public class FaqEntity {
     @NotBlank(message = "Answer is required")
     @Column(name = "answer", nullable = false)
     private String answer;
-} 
+
+    @NotBlank(message = "Category is required")
+    @Column(name = "category", nullable = false)
+    private String category;
+}

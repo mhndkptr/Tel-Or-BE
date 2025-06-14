@@ -11,6 +11,7 @@ public class FaqMapper {
         return FaqEntity.builder()
                 .question(request.getQuestion())
                 .answer(request.getAnswer())
+                .category(request.getCategory())
                 .build();
     }
 
@@ -19,6 +20,7 @@ public class FaqMapper {
                 .id(entity.getId())
                 .question(entity.getQuestion())
                 .answer(entity.getAnswer())
+                .category(entity.getCategory())
                 .build();
     }
 } 

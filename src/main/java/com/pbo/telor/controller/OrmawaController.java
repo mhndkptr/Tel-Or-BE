@@ -23,8 +23,10 @@ import com.pbo.telor.dto.response.OrmawaResponse;
 import com.pbo.telor.service.OrmawaService;
 import com.pbo.telor.utils.ResponseUtil;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Ormawa")
 @RestController
 @RequestMapping("/api/v1/ormawa")
 @RequiredArgsConstructor

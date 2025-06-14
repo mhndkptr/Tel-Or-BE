@@ -15,4 +15,5 @@ public class FaqResponse {
     private UUID id;
     private String question;
     private String answer;
+    private String category;
 } 

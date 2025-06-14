@@ -23,8 +23,10 @@ import com.pbo.telor.dto.response.EventResponse;
 import com.pbo.telor.service.EventService;
 import com.pbo.telor.utils.ResponseUtil;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Event")
 @RestController
 @RequestMapping("/api/v1/events")
 @RequiredArgsConstructor

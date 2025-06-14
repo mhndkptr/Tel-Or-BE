@@ -14,10 +14,12 @@ import com.pbo.telor.model.UserEntity;
 import com.pbo.telor.service.UserService;
 import com.pbo.telor.utils.ResponseUtil;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import java.util.*;
 
+@Tag(name = "User")
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
