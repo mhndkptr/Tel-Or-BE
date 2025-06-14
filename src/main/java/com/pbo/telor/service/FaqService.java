@@ -26,9 +26,14 @@ public class FaqService {
                 .collect(Collectors.toList());
     }
 
-    public Page<FaqResponse> findAllPaged(Integer page, Integer limit) {
+    public Page<FaqResponse> findAllPaged(Integer page, Integer limit, String category) {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), limit);
-        Page<FaqEntity> faqEntities = faqRepository.findAll(pageable);
+        Page<FaqEntity> faqEntities;
+        if (category != null && !category.isBlank()) {
+            faqEntities = faqRepository.findAllByCategory(category, pageable);
+        } else {
+            faqEntities = faqRepository.findAll(pageable);
+        }
         return faqEntities.map(faqMapper::toResponse);
     }
 
@@ -47,10 +52,10 @@ public class FaqService {
     public FaqResponse updateFaq(UUID id, FaqRequest request) {
         FaqEntity faq = faqRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("FAQ not found with id: " + id));
-        
+
         faq.setQuestion(request.getQuestion());
         faq.setAnswer(request.getAnswer());
-        
+
         FaqEntity updatedFaq = faqRepository.save(faq);
         return faqMapper.toResponse(updatedFaq);
     }
@@ -58,7 +63,7 @@ public class FaqService {
     public FaqResponse patchFaq(UUID id, FaqRequest patchData) {
         FaqEntity faq = faqRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("FAQ not found with id: " + id));
-        
+
         if (patchData.getQuestion() != null) {
             faq.setQuestion(patchData.getQuestion());
         }

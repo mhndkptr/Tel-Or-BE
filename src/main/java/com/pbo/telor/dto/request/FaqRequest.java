@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class FaqRequest {
     private String question;
     private String answer;
+    private String category;
 } 
