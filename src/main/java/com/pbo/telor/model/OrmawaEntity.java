@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.pbo.telor.enums.OrmawaCategory;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,48 +21,45 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.pbo.telor.enums.OrmawaCategory;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "ormawa")
 @Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "ormawa")
 public abstract class OrmawaEntity {
+
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @NotBlank(message = "Full name is required")
-    @Column(nullable = false)
-    private String name;
+    @NotBlank(message = "Ormawa name is required")
+    @Column(name = "ormawa_name", nullable = false)
+    private String ormawaName;
 
     @NotBlank(message = "Description is required")
-    @Column(nullable = false)
+    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
     private String description;
 
     @NotBlank(message = "Content is required")
-    @Column(nullable = false)
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @NotNull(message = "IsOpenRegistration is required")
-    @Column(nullable = false, unique = true)
-    private boolean isOpenRegistration;
+    @NotNull(message = "Open registration flag is required")
+    @Column(name = "is_open_registration", nullable = false)
+    private Boolean isOpenRegistration;
 
     @NotBlank(message = "Icon is required")
-    @Column(nullable = false, unique = true)
+    @Column(name = "icon", nullable = false)
     private String icon;
 
     @NotBlank(message = "Background is required")
-    @Column(nullable = false, unique = true)
+    @Column(name = "background", nullable = false)
     private String background;
 
-    @NotNull(message = "Category must be selected")
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "category", nullable = false)
     private OrmawaCategory category;
-
 }

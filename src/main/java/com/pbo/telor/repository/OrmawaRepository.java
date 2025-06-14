@@ -13,5 +13,5 @@ import com.pbo.telor.model.OrmawaEntity;
 public interface OrmawaRepository extends JpaRepository<OrmawaEntity, UUID> {
     List<OrmawaEntity> findByCategory(OrmawaCategory category);
     List<OrmawaEntity> findByIsOpenRegistrationTrue();
-    List<OrmawaEntity> findByNameContainingIgnoreCase(String name);
+    List<OrmawaEntity> findByOrmawaNameContainingIgnoreCase(String ormawaName);
 }
