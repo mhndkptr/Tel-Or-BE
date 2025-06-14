@@ -9,6 +9,7 @@ import com.pbo.telor.service.TokenService;
 import com.pbo.telor.utils.JwtUtil;
 import com.pbo.telor.utils.ResponseUtil;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Authentication")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
