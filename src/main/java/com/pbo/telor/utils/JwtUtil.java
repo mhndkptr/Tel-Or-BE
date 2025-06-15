@@ -4,9 +4,14 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+
+import com.pbo.telor.model.UserEntity;
+import com.pbo.telor.repository.UserRepository;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -28,6 +33,9 @@ public class JwtUtil {
 
     @Value("${jwt.refresh-expiration}")
     private long refreshExpiration;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private SecretKey secretKey;
     private SecretKey refreshSecretKey;
@@ -75,11 +83,21 @@ public class JwtUtil {
     }
 
     public String generateAccessToken(UserDetails userDetails) {
-        return createToken(new HashMap<>(), userDetails.getUsername(), expiration, secretKey);
+        UserEntity user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("role", user.getRole());
+        return createToken(claims, userDetails.getUsername(), expiration, secretKey);
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        return createToken(new HashMap<>(), userDetails.getUsername(), refreshExpiration, refreshSecretKey);
+        UserEntity user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("role", user.getRole());
+        return createToken(claims, userDetails.getUsername(), refreshExpiration, refreshSecretKey);
     }
 
     private String createToken(Map<String, Object> claims, String subject, long expiration, SecretKey key) {
