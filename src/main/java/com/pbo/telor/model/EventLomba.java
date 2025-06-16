@@ -24,6 +24,6 @@ public class EventLomba extends EventEntity {
     @Column(name = "stage")
     private EventRegion stage;
 
-    @Column(name = "prize_pool")
-    private String prizePool;
+    @Column(name = "prize")
+    private String prize;
 }

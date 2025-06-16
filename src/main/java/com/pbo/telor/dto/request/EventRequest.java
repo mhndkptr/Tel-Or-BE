@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pbo.telor.enums.EventType;
+import com.pbo.telor.enums.EventRegion;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,8 @@ public class EventRequest {
     private String description;
     private String content;
     private EventType eventType;
+    private EventRegion eventRegion;
+    private String prize;
     
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date startEvent;
