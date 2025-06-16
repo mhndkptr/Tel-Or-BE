@@ -62,4 +62,5 @@ public abstract class OrmawaEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     private OrmawaCategory category;
+
 }
