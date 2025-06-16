@@ -1,5 +1,6 @@
 package com.pbo.telor.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -25,6 +26,13 @@ import lombok.RequiredArgsConstructor;
 public class OrmawaService {
 
     private final OrmawaRepository ormawaRepository;
+
+    public List<OrmawaResponse> findAll() {
+        return ormawaRepository.findAll()
+                .stream()
+                .map(OrmawaMapper::toResponse)
+                .toList();
+    }
 
     public Page<OrmawaResponse> findAllPaged(int page, int size) {
         return ormawaRepository.findAll(PageRequest.of(page, size))
@@ -58,7 +66,6 @@ public class OrmawaService {
             default -> throw new IllegalArgumentException("Unsupported ormawa category: " + type);
         }
 
-        // Common field setter
         entity.setCategory(type);
         entity.setOrmawaName(request.getOrmawaName());
         entity.setDescription(request.getDescription());
@@ -91,7 +98,6 @@ public class OrmawaService {
         if (request.getIcon() != null) entity.setIcon(request.getIcon());
         if (request.getBackground() != null) entity.setBackground(request.getBackground());
 
-        // Set field khusus
         if (entity instanceof OrmawaLaboratoryEntity lab && request.getLabType() != null) {
             lab.setLabType(request.getLabType());
         }
