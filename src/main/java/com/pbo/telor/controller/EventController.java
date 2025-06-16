@@ -1,17 +1,19 @@
 package com.pbo.telor.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,10 +22,12 @@ import com.pbo.telor.dto.common.BaseResponse;
 import com.pbo.telor.dto.common.PaginationResponse;
 import com.pbo.telor.dto.request.EventRequest;
 import com.pbo.telor.dto.response.EventResponse;
+import com.pbo.telor.enums.EventType;
 import com.pbo.telor.service.EventService;
 import com.pbo.telor.utils.ResponseUtil;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Event")
@@ -37,9 +41,13 @@ public class EventController {
     @GetMapping
     public ResponseEntity<BaseResponse<List<EventResponse>>> getEventsPaged(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
-
-        Page<EventResponse> events = eventService.findAllPaged(page, limit);
+            @RequestParam(value = "limit", defaultValue = "10") Integer limit,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "type", required = false) EventType type,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate
+    ) {
+        Page<EventResponse> events = eventService.findAllFiltered(page, limit, keyword, type, startDate, endDate);
 
         return ResponseUtil.paged(
                 events.getContent(),
@@ -59,31 +67,39 @@ public class EventController {
         return ResponseUtil.ok(event, "Successfully retrieved event");
     }
 
-    @PostMapping
-    public ResponseEntity<BaseResponse<EventResponse>> createEvent(@RequestBody EventRequest request) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<BaseResponse<EventResponse>> createEvent(
+            @ModelAttribute @Valid EventRequest request) {
+        
         EventResponse event = eventService.createEvent(request);
         return ResponseUtil.ok(event, "Successfully created event");
     }
 
-    @PutMapping("/{id}")
+
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<BaseResponse<EventResponse>> updateEvent(
             @PathVariable UUID id,
-            @RequestBody EventRequest request) {
+            @ModelAttribute @Valid EventRequest request) {
+        
         EventResponse event = eventService.updateEvent(id, request);
         return ResponseUtil.ok(event, "Successfully updated event");
     }
 
-    @PatchMapping("/{id}")
+
+    @PatchMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<BaseResponse<EventResponse>> patchEvent(
             @PathVariable UUID id,
-            @RequestBody EventRequest patchData) {
-        EventResponse event = eventService.patchEvent(id, patchData);
+            @ModelAttribute @Valid EventRequest request) {
+
+        EventResponse event = eventService.patchEvent(id, request);
         return ResponseUtil.ok(event, "Successfully patched event");
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<Object>> deleteEvent(@PathVariable UUID id) {
         eventService.deleteEvent(id);
         return ResponseUtil.ok(null, "Successfully deleted event");
     }
+
 }
