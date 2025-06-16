@@ -53,6 +53,7 @@ public class OpenApiConfig {
                         "/api/v1/users/**",
                         "/api/v1/faqs/**",
                         "/api/v1/events/**",
+                        "/api/v1/upload/**",
                         "/api/v1/ormawa/**")
                 .build();
     }
