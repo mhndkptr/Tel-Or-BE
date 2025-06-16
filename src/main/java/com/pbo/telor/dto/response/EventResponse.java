@@ -1,9 +1,10 @@
 package com.pbo.telor.dto.response;
-import com.pbo.telor.enums.EventType;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import com.pbo.telor.enums.EventType;
+import com.pbo.telor.enums.EventRegion;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,8 @@ public class EventResponse {
     private String description;
     private String content;
     private EventType eventType;
-    private Date startEvent;
-    private Date endEvent;
-    private int duration; // hitungan hari, hasil dari getDuration()
+    private EventRegion eventRegion;
+    private String startEvent;
+    private String endEvent;
+    private int duration;
 }
