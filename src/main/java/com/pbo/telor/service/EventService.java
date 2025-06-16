@@ -15,7 +15,12 @@ import com.pbo.telor.dto.request.EventRequest;
 import com.pbo.telor.dto.response.EventResponse;
 import com.pbo.telor.enums.EventType;
 import com.pbo.telor.mapper.EventMapper;
-import com.pbo.telor.model.*;
+import com.pbo.telor.model.EventBeasiswa;
+import com.pbo.telor.model.EventCompanyVisit;
+import com.pbo.telor.model.EventEntity;
+import com.pbo.telor.model.EventLomba;
+import com.pbo.telor.model.EventOpenRecruitment;
+import com.pbo.telor.model.EventSeminar;
 import com.pbo.telor.repository.EventRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -190,5 +195,9 @@ public class EventService {
 
         return eventRepository.findAll(spec, PageRequest.of(page, size))
                 .map(EventMapper::toResponse);
+    }
+
+    public List<EventResponse> findAll() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

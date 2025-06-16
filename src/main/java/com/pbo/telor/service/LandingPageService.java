@@ -1,12 +1,18 @@
 package com.pbo.telor.service;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
 import com.pbo.telor.dto.response.LandingPageResponse;
 import com.pbo.telor.mapper.LandingPageMapper;
 import com.pbo.telor.repository.EventRepository;
 import com.pbo.telor.repository.FaqRepository;
 import com.pbo.telor.repository.OrmawaRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +25,11 @@ public class LandingPageService {
 
     public LandingPageResponse getLandingData() {
         var latestEvents = eventRepository.findTop3ByOrderByStartEventDesc();
-        var topOrmawa = ormawaRepository.findTop3OrmawaByPostCount();
+        var topOrmawa = ormawaRepository.findAll()
+                .stream()
+                .filter(ormawa -> ormawa.getIsOpenRegistration())
+                .limit(3)
+                .toList();
         var latestFaqs = faqRepository.findAllByCategory(
                 "umum",
                 PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "createdAt"))

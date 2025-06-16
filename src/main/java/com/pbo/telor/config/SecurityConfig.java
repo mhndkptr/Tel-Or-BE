@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/upload/**").permitAll()
                         .requestMatchers("/api/v1/users/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers("/api/v1/ormawa/**").permitAll()
+                        .requestMatchers("/api/v1/landing/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint())
@@ -67,8 +68,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://api.telor.muhhendikaputra.my.id",
-                "http://localhost:3636", "https://telor.muhhendikaputra.my.id"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                "http://localhost:3636", "https://telor.muhhendikaputra.my.id", "http://localhost:3637"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Client-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
