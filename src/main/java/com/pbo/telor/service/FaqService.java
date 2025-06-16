@@ -55,6 +55,7 @@ public class FaqService {
 
         faq.setQuestion(request.getQuestion());
         faq.setAnswer(request.getAnswer());
+        faq.setCategory(request.getCategory());
 
         FaqEntity updatedFaq = faqRepository.save(faq);
         return faqMapper.toResponse(updatedFaq);
@@ -69,6 +70,9 @@ public class FaqService {
         }
         if (patchData.getAnswer() != null) {
             faq.setAnswer(patchData.getAnswer());
+        }
+        if (patchData.getCategory() != null) {
+            faq.setCategory(patchData.getCategory());
         }
 
         FaqEntity patchedFaq = faqRepository.save(faq);
