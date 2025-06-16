@@ -20,6 +20,14 @@ This document provides information about the RESTful API built using Java Spring
 
 ---
 
+## 🧪 API Testing with Swagger
+
+You can interactively test and explore the API using Swagger UI:
+
+- **Swagger UI:** [https://api.telor.muhhendikaputra.my.id/api-docs](https://api.telor.muhhendikaputra.my.id/api-docs)
+
+---
+
 ## Local Setup
 
 Follow these steps to run the API locally:
