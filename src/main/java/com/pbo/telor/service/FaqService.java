@@ -55,24 +55,10 @@ public class FaqService {
 
         faq.setQuestion(request.getQuestion());
         faq.setAnswer(request.getAnswer());
+        faq.setCategory(request.getCategory());
 
         FaqEntity updatedFaq = faqRepository.save(faq);
         return faqMapper.toResponse(updatedFaq);
-    }
-
-    public FaqResponse patchFaq(UUID id, FaqRequest patchData) {
-        FaqEntity faq = faqRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("FAQ not found with id: " + id));
-
-        if (patchData.getQuestion() != null) {
-            faq.setQuestion(patchData.getQuestion());
-        }
-        if (patchData.getAnswer() != null) {
-            faq.setAnswer(patchData.getAnswer());
-        }
-
-        FaqEntity patchedFaq = faqRepository.save(faq);
-        return faqMapper.toResponse(patchedFaq);
     }
 
     public void deleteFaq(UUID id) {
