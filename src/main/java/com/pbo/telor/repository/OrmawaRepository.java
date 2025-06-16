@@ -19,14 +19,8 @@ public interface OrmawaRepository extends JpaRepository<OrmawaEntity, UUID>, Jpa
     List<OrmawaEntity> findByOrmawaNameContainingIgnoreCase(String ormawaName);
     List<OrmawaEntity> findByCategory(OrmawaCategory category);
     List<OrmawaEntity> findByIsOpenRegistrationTrue();
-    @Query(value = """
-        SELECT o.* FROM ormawa o
-        LEFT JOIN post p ON o.id = p.ormawa_id
-        GROUP BY o.id
-        ORDER BY COUNT(p.id) DESC
-        LIMIT 3
-        """, nativeQuery = true)
-    List<OrmawaEntity> findTop3OrmawaByPostCount();
+    @Query(value = "SELECT o.* FROM ormawa o LIMIT 3", nativeQuery = true)
+    List<OrmawaEntity> findTop3Ormawa();
     List<OrmawaLaboratoryEntity> findByLabType(LabType labType);
     List<OrmawaUKMEntity> findByUkmCategory(String ukmCategory);
 }
