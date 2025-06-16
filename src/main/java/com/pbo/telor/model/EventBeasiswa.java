@@ -23,4 +23,7 @@ public class EventBeasiswa extends EventEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "stage")
     private EventRegion stage;
+
+    @Column(name = "prize")
+    private String prize;
 }
