@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class UploadService {
 
-    private static final String BASE_PATH = "src/main/resources/public/assets/";
+    private static final String BASE_PATH = System.getProperty("user.dir") + "/uploads/";
     private static final String BASE_URL = "/assets/";
 
     public List<String> saveFiles(String folder, MultipartFile[] files) {
