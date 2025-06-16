@@ -20,7 +20,10 @@ public class LandingPageService {
     public LandingPageResponse getLandingData() {
         var latestEvents = eventRepository.findTop3ByOrderByStartEventDesc();
         var topOrmawa = ormawaRepository.findTop3OrmawaByPostCount();
-        var latestFaqs = faqRepository.findTop3ByOrderByCreatedAtDesc();
+        var latestFaqs = faqRepository.findAllByCategory(
+                "umum",
+                PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "createdAt"))
+        ).getContent();
 
         return LandingPageResponse.builder()
                 .latestEvents(landingPageMapper.toEventPreviewDTOs(latestEvents))

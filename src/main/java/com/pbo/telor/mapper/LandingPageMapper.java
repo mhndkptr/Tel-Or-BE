@@ -15,14 +15,14 @@ public class LandingPageMapper {
 
     public List<LandingPageResponse.EventPreviewDTO> toEventPreviewDTOs(List<EventEntity> events) {
         return events.stream().map(e ->
-                LandingPageResponse.EventPreviewDTO.builder()
-                        .eventId(e.getEventId().toString()) // convert UUID to String
-                        .eventName(e.getEventName())
-                        .image(e.getImage() != null && !e.getImage().isEmpty() ? e.getImage().get(0) : null)
-                        .eventType(e.getEventType())
-                        .startEvent(e.getStartEvent().toString())
-                        .build()
-        ).collect(Collectors.toList());
+        LandingPageResponse.EventPreviewDTO.builder()
+                .eventId(e.getEventId().toString())
+                .eventName(e.getEventName())
+                .image(e.getImage() != null && !e.getImage().isEmpty() ? e.getImage().get(0) : null)
+                .eventType(e.getEventType())
+                .startEvent(e.getStartEvent().toString())
+                .build()
+).collect(Collectors.toList());
     }
 
     public List<LandingPageResponse.OrmawaWithCountDTO> toOrmawaWithCountDTOs(List<OrmawaEntity> ormawas) {
