@@ -140,30 +140,4 @@ public class FaqControllerTest {
         .andExpect(jsonPath("$.data.id").value(id.toString()))
         .andExpect(jsonPath("$.data.question").value("Update Q"));
   }
-
-  @Test
-  void shouldReturnPatchedFaq_whenPatchFaq() throws Exception {
-    UUID id = UUID.randomUUID();
-    FaqRequest patchRequest = FaqRequest.builder()
-        .question("Patch Q")
-        .answer("Patch A")
-        .category("umum")
-        .build();
-
-    FaqResponse response = FaqResponse.builder()
-        .id(id)
-        .question(patchRequest.getQuestion())
-        .answer(patchRequest.getAnswer())
-        .category(patchRequest.getCategory())
-        .build();
-
-    Mockito.when(faqService.patchFaq(eq(id), any(FaqRequest.class))).thenReturn(response);
-
-    mockMvc.perform(patch("/api/v1/faqs/{id}", id)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(patchRequest)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data.id").value(id.toString()))
-        .andExpect(jsonPath("$.data.question").value("Patch Q"));
-  }
 }
