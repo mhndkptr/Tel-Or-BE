@@ -1,8 +1,10 @@
 package com.pbo.telor.dto.request;
-import com.pbo.telor.enums.EventType;
-
 import java.util.Date;
-import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.pbo.telor.enums.EventType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +19,14 @@ import lombok.Setter;
 @Builder
 public class EventRequest {
     private String eventName;
-    private List<String> image;
+    private MultipartFile image;
     private String description;
     private String content;
     private EventType eventType;
+    
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date startEvent;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date endEvent;
 }
