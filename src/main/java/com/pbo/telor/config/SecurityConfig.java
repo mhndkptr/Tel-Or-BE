@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/assets/**").permitAll()
+                        .requestMatchers("/api/v1/upload/**").permitAll()
                         .requestMatchers("/api/v1/users/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers("/api/v1/ormawa/**").permitAll()
                         .anyRequest().authenticated())
