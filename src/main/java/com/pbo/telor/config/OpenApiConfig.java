@@ -1,18 +1,17 @@
 package com.pbo.telor.config;
 
+import java.util.List;
+
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
-import io.swagger.v3.oas.models.servers.ServerVariables;
-
-import org.springdoc.core.models.GroupedOpenApi;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Value;
-
 import io.swagger.v3.oas.models.servers.ServerVariable;
-
-import java.util.List;
+import io.swagger.v3.oas.models.servers.ServerVariables;
 
 @Configuration
 public class OpenApiConfig {
@@ -54,6 +53,7 @@ public class OpenApiConfig {
                         "/api/v1/faqs/**",
                         "/api/v1/events/**",
                         "/api/v1/upload/**",
+                        "/api/v1/landing/**",
                         "/api/v1/ormawa/**")
                 .build();
     }

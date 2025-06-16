@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/upload/**").permitAll()
                         .requestMatchers("/api/v1/users/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers("/api/v1/ormawa/**").permitAll()
+                        .requestMatchers("/api/v1/landing/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint())

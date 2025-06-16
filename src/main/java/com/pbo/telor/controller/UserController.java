@@ -55,7 +55,7 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<BaseResponse<UserResponse>> create(@Valid @ModelAttribute UserEntity user) {
+    public ResponseEntity<BaseResponse<UserResponse>> create(@Valid @RequestBody UserEntity user) {
         UserResponse created = userService.create(user);
         return ResponseUtil.ok(created, "User created successfully");
     }
@@ -64,7 +64,7 @@ public class UserController {
     public ResponseEntity<BaseResponse<UserResponse>> update(
             @Valid
             @PathVariable UUID id,
-            @ModelAttribute UserEntity userData) {
+            @RequestBody  UserEntity userData) {
         UserResponse updated = userService.update(id, userData);
         return ResponseUtil.ok(updated, "User updated successfully");
     }
@@ -72,7 +72,7 @@ public class UserController {
     @PatchMapping(value = "/{id}")
     public ResponseEntity<BaseResponse<UserResponse>> patchUser(
             @PathVariable UUID id,
-            @ModelAttribute UserEntity patchData) {
+            @RequestBody UserEntity patchData) {
 
         UserResponse updated = userService.patchUser(id, patchData);
         return ResponseUtil.ok(updated, "User updated successfully");
