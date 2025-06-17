@@ -1,26 +1,30 @@
 package com.pbo.telor.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.pbo.telor.dto.request.OrmawaRequest;
 import com.pbo.telor.dto.response.OrmawaResponse;
@@ -28,16 +32,23 @@ import com.pbo.telor.enums.LabType;
 import com.pbo.telor.enums.OrmawaCategory;
 import com.pbo.telor.exception.NotFoundException;
 import com.pbo.telor.mapper.OrmawaMapper;
+import com.pbo.telor.model.OrmawaCommunityEntity;
 import com.pbo.telor.model.OrmawaEntity;
 import com.pbo.telor.repository.OrmawaRepository;
 
 class OrmawaServiceTest {
 
+    @InjectMocks
+    private OrmawaService ormawaService;
+
     @Mock
     private OrmawaRepository ormawaRepository;
 
-    @InjectMocks
-    private OrmawaService ormawaService;
+    @Mock
+    private UploadService uploadService;
+
+    @Mock
+    private OrmawaMapper ormawaMapper;
 
     @BeforeEach
     void setUp() {
@@ -125,10 +136,14 @@ class OrmawaServiceTest {
         when(request.getDescription()).thenReturn("desc");
         when(request.getContent()).thenReturn("content");
         when(request.getIsOpenRegistration()).thenReturn(true);
-        when(request.getIcon()).thenReturn("icon.png");
-        when(request.getBackground()).thenReturn("bg.png");
+        MultipartFile iconFile = mock(MultipartFile.class);
+        MultipartFile bgFile = mock(MultipartFile.class);
+        when(request.getIcon()).thenReturn(iconFile);
+        when(request.getBackground()).thenReturn(bgFile);
 
+        when(uploadService.saveFile(anyString(), any(MultipartFile.class))).thenReturn("some-url");
         OrmawaEntity savedEntity = createSampleOrmawa();
+        when(ormawaMapper.fillEntityFromRequest(any(), anyString(), anyString())).thenReturn(new OrmawaCommunityEntity());
         when(ormawaRepository.save(any(OrmawaEntity.class))).thenReturn(savedEntity);
         OrmawaResponse response = mock(OrmawaResponse.class);
 
@@ -151,10 +166,15 @@ class OrmawaServiceTest {
         when(request.getDescription()).thenReturn("desc");
         when(request.getContent()).thenReturn("content");
         when(request.getIsOpenRegistration()).thenReturn(true);
-        when(request.getIcon()).thenReturn("icon.png");
-        when(request.getBackground()).thenReturn("bg.png");
 
+        MultipartFile iconFile = mock(MultipartFile.class);
+        MultipartFile bgFile = mock(MultipartFile.class);
+        when(request.getIcon()).thenReturn(iconFile);
+        when(request.getBackground()).thenReturn(bgFile);
+
+        when(uploadService.saveFile(anyString(), any(MultipartFile.class))).thenReturn("some-url");
         OrmawaEntity savedEntity = createSampleOrmawa();
+        when(ormawaMapper.fillEntityFromRequest(any(), anyString(), anyString())).thenReturn(new OrmawaCommunityEntity());
         when(ormawaRepository.save(any(OrmawaEntity.class))).thenReturn(savedEntity);
         OrmawaResponse response = mock(OrmawaResponse.class);
 
@@ -178,7 +198,7 @@ class OrmawaServiceTest {
         OrmawaResponse response = mock(OrmawaResponse.class);
 
         try (var mocked = mockStatic(OrmawaMapper.class)) {
-            mocked.when(() -> OrmawaMapper.updateEntityFromRequest(entity, request)).thenCallRealMethod();
+            mocked.when(() -> OrmawaMapper.updateEntityFromRequest(entity, request, "icon.png", "background.png")).thenCallRealMethod();
             mocked.when(() -> OrmawaMapper.toResponse(entity)).thenReturn(response);
 
             OrmawaResponse result = ormawaService.updateOrmawa(id, request);

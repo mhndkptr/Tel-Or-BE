@@ -20,20 +20,27 @@ import com.pbo.telor.model.OrmawaLaboratoryEntity;
 import com.pbo.telor.model.OrmawaOrganizationEntity;
 import com.pbo.telor.model.OrmawaUKMEntity;
 
+import org.springframework.web.multipart.MultipartFile;
+
 class OrmawaMapperTest {
 
     @Test
     void fillEntityFromRequest_shouldMapCommunity() {
         OrmawaRequest request = mock(OrmawaRequest.class);
+        MultipartFile iconFile = mock(MultipartFile.class);
+        MultipartFile bgFile = mock(MultipartFile.class);
         when(request.getCategory()).thenReturn(OrmawaCategory.COMMUNITY);
         when(request.getOrmawaName()).thenReturn("Community");
         when(request.getDescription()).thenReturn("desc");
         when(request.getContent()).thenReturn("content");
         when(request.getIsOpenRegistration()).thenReturn(true);
-        when(request.getIcon()).thenReturn("icon.png");
-        when(request.getBackground()).thenReturn("bg.png");
+        when(iconFile.isEmpty()).thenReturn(false);
+        when(bgFile.isEmpty()).thenReturn(false);
+        when(iconFile.getOriginalFilename()).thenReturn("icon.png");
+        when(bgFile.getOriginalFilename()).thenReturn("bg.png");
 
-        OrmawaEntity entity = OrmawaMapper.fillEntityFromRequest(request);
+        OrmawaMapper ormawaMapper = new OrmawaMapper(); 
+        OrmawaEntity entity = ormawaMapper.fillEntityFromRequest(request, "icon.png", "bg.png");
 
         assertTrue(entity instanceof OrmawaCommunityEntity);
         assertEquals("Community", entity.getOrmawaName());
@@ -48,16 +55,21 @@ class OrmawaMapperTest {
     @Test
     void fillEntityFromRequest_shouldMapLab() {
         OrmawaRequest request = mock(OrmawaRequest.class);
+        MultipartFile iconFile = mock(MultipartFile.class);
+        MultipartFile bgFile = mock(MultipartFile.class);
         when(request.getCategory()).thenReturn(OrmawaCategory.LAB);
         when(request.getLabType()).thenReturn(LabType.PRAKTIKUM);
         when(request.getOrmawaName()).thenReturn("Lab");
         when(request.getDescription()).thenReturn("desc");
         when(request.getContent()).thenReturn("content");
         when(request.getIsOpenRegistration()).thenReturn(false);
-        when(request.getIcon()).thenReturn("icon.png");
-        when(request.getBackground()).thenReturn("bg.png");
+        when(iconFile.isEmpty()).thenReturn(false);
+        when(bgFile.isEmpty()).thenReturn(false);
+        when(iconFile.getOriginalFilename()).thenReturn("icon.png");
+        when(bgFile.getOriginalFilename()).thenReturn("bg.png");
 
-        OrmawaEntity entity = OrmawaMapper.fillEntityFromRequest(request);
+        OrmawaMapper ormawaMapper = new OrmawaMapper(); 
+        OrmawaEntity entity = ormawaMapper.fillEntityFromRequest(request, "icon.png", "bg.png");
 
         assertTrue(entity instanceof OrmawaLaboratoryEntity);
         assertEquals(LabType.PRAKTIKUM, ((OrmawaLaboratoryEntity) entity).getLabType());
@@ -66,16 +78,21 @@ class OrmawaMapperTest {
     @Test
     void fillEntityFromRequest_shouldMapUKM() {
         OrmawaRequest request = mock(OrmawaRequest.class);
+        MultipartFile iconFile = mock(MultipartFile.class);
+        MultipartFile bgFile = mock(MultipartFile.class);
         when(request.getCategory()).thenReturn(OrmawaCategory.UKM);
         when(request.getUkmCategory()).thenReturn("Olahraga");
         when(request.getOrmawaName()).thenReturn("UKM");
         when(request.getDescription()).thenReturn("desc");
         when(request.getContent()).thenReturn("content");
         when(request.getIsOpenRegistration()).thenReturn(false);
-        when(request.getIcon()).thenReturn("icon.png");
-        when(request.getBackground()).thenReturn("bg.png");
+        when(iconFile.isEmpty()).thenReturn(false);
+        when(bgFile.isEmpty()).thenReturn(false);
+        when(iconFile.getOriginalFilename()).thenReturn("icon.png");
+        when(bgFile.getOriginalFilename()).thenReturn("bg.png");
 
-        OrmawaEntity entity = OrmawaMapper.fillEntityFromRequest(request);
+        OrmawaMapper ormawaMapper = new OrmawaMapper(); 
+        OrmawaEntity entity = ormawaMapper.fillEntityFromRequest(request, "icon.png", "bg.png");
 
         assertTrue(entity instanceof OrmawaUKMEntity);
         assertEquals("Olahraga", ((OrmawaUKMEntity) entity).getUkmCategory());
@@ -84,15 +101,20 @@ class OrmawaMapperTest {
     @Test
     void fillEntityFromRequest_shouldMapOrganization() {
         OrmawaRequest request = mock(OrmawaRequest.class);
+        MultipartFile iconFile = mock(MultipartFile.class);
+        MultipartFile bgFile = mock(MultipartFile.class);
         when(request.getCategory()).thenReturn(OrmawaCategory.ORGANIZATION);
         when(request.getOrmawaName()).thenReturn("Org");
         when(request.getDescription()).thenReturn("desc");
         when(request.getContent()).thenReturn("content");
         when(request.getIsOpenRegistration()).thenReturn(false);
-        when(request.getIcon()).thenReturn("icon.png");
-        when(request.getBackground()).thenReturn("bg.png");
+        when(iconFile.isEmpty()).thenReturn(false);
+        when(bgFile.isEmpty()).thenReturn(false);
+        when(iconFile.getOriginalFilename()).thenReturn("icon.png");
+        when(bgFile.getOriginalFilename()).thenReturn("bg.png");
 
-        OrmawaEntity entity = OrmawaMapper.fillEntityFromRequest(request);
+        OrmawaMapper ormawaMapper = new OrmawaMapper(); 
+        OrmawaEntity entity = ormawaMapper.fillEntityFromRequest(request, "icon.png", "bg.png");
 
         assertTrue(entity instanceof OrmawaOrganizationEntity);
     }
@@ -102,7 +124,11 @@ class OrmawaMapperTest {
         OrmawaRequest request = mock(OrmawaRequest.class);
         when(request.getCategory()).thenReturn(null);
 
-        assertThrows(IllegalArgumentException.class, () -> OrmawaMapper.fillEntityFromRequest(request));
+        OrmawaMapper ormawaMapper = new OrmawaMapper();
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> ormawaMapper.fillEntityFromRequest(request, "", "")
+        );
     }
 
     @Test
@@ -160,14 +186,18 @@ class OrmawaMapperTest {
     void updateEntityFromRequest_shouldUpdateCommonFields() {
         OrmawaCommunityEntity entity = new OrmawaCommunityEntity();
         OrmawaRequest request = mock(OrmawaRequest.class);
+        MultipartFile iconFile = mock(MultipartFile.class);
+        MultipartFile bgFile = mock(MultipartFile.class);
         when(request.getOrmawaName()).thenReturn("Updated");
         when(request.getDescription()).thenReturn("desc");
         when(request.getContent()).thenReturn("content");
         when(request.getIsOpenRegistration()).thenReturn(false);
-        when(request.getIcon()).thenReturn("icon.png");
-        when(request.getBackground()).thenReturn("bg.png");
+        when(iconFile.isEmpty()).thenReturn(false);
+        when(bgFile.isEmpty()).thenReturn(false);
+        when(iconFile.getOriginalFilename()).thenReturn("icon.png");
+        when(bgFile.getOriginalFilename()).thenReturn("bg.png");
 
-        OrmawaMapper.updateEntityFromRequest(entity, request);
+        OrmawaMapper.updateEntityFromRequest(entity, request, "icon.png", "bg.png");
 
         assertEquals("Updated", entity.getOrmawaName());
         assertEquals("desc", entity.getDescription());
@@ -185,7 +215,7 @@ class OrmawaMapperTest {
         when(request.getLabType()).thenReturn(LabType.PRAKTIKUM);
         when(request.getOrmawaName()).thenReturn("Lab");
 
-        OrmawaMapper.updateEntityFromRequest(entity, request);
+        OrmawaMapper.updateEntityFromRequest(entity, request, "icon.png", "bg.png");
 
         assertEquals(LabType.PRAKTIKUM, entity.getLabType());
     }
@@ -198,7 +228,7 @@ class OrmawaMapperTest {
         when(request.getLabType()).thenReturn(null);
         when(request.getOrmawaName()).thenReturn("Lab");
 
-        OrmawaMapper.updateEntityFromRequest(entity, request);
+        OrmawaMapper.updateEntityFromRequest(entity, request, "icon.png", "bg.png");
 
         assertEquals(LabType.RESEARCH, entity.getLabType());
     }
@@ -211,7 +241,7 @@ class OrmawaMapperTest {
         when(request.getUkmCategory()).thenReturn("NewUkm");
         when(request.getOrmawaName()).thenReturn("UKM");
 
-        OrmawaMapper.updateEntityFromRequest(entity, request);
+        OrmawaMapper.updateEntityFromRequest(entity, request, "icon.png", "bg.png");
 
         assertEquals("NewUkm", entity.getUkmCategory());
     }
@@ -224,7 +254,7 @@ class OrmawaMapperTest {
         when(request.getUkmCategory()).thenReturn(null);
         when(request.getOrmawaName()).thenReturn("UKM");
 
-        OrmawaMapper.updateEntityFromRequest(entity, request);
+        OrmawaMapper.updateEntityFromRequest(entity, request, "icon.png", "bg.png");
 
         assertEquals("Old", entity.getUkmCategory());
     }

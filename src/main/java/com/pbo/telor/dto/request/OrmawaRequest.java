@@ -1,5 +1,7 @@
 package com.pbo.telor.dto.request;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.pbo.telor.enums.LabType;
 import com.pbo.telor.enums.OrmawaCategory;
 
@@ -19,8 +21,8 @@ public class OrmawaRequest {
     private String description;
     private String content;
     private Boolean isOpenRegistration;
-    private String icon;
-    private String background;
+    private MultipartFile icon;
+    private MultipartFile background;
 
     private OrmawaCategory category;
 
