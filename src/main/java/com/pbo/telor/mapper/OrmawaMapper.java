@@ -15,8 +15,11 @@ public class OrmawaMapper {
 
     // === REQUEST → ENTITY (Create) ===
     public static OrmawaEntity fillEntityFromRequest(OrmawaRequest request) {
-        OrmawaEntity entity;
+        if (request.getCategory() == null) {
+            throw new IllegalArgumentException("Ormawa category cannot be null");
+        }
 
+        OrmawaEntity entity;
         switch (request.getCategory()) {
             case COMMUNITY -> entity = new OrmawaCommunityEntity();
             case ORGANIZATION -> entity = new OrmawaOrganizationEntity();
