@@ -36,4 +36,27 @@ public class UploadService {
 
         return uploadedUrls;
     }
+
+    public String saveFile(String folder, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
+        String fullPath = BASE_PATH + folder;
+        File dir = new File(fullPath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        File destination = new File(dir, filename);
+
+        try {
+            file.transferTo(destination);
+            return BASE_URL + folder + "/" + filename;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload file: " + filename, e);
+        }
+    }
+
 }

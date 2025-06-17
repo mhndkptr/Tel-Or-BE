@@ -14,7 +14,7 @@ import com.pbo.telor.model.OrmawaUKMEntity;
 public class OrmawaMapper {
 
     // === REQUEST → ENTITY (Create) ===
-    public static OrmawaEntity fillEntityFromRequest(OrmawaRequest request) {
+    public OrmawaEntity fillEntityFromRequest(OrmawaRequest request, String iconUrl, String bgUrl) {
         if (request.getCategory() == null) {
             throw new IllegalArgumentException("Ormawa category cannot be null");
         }
@@ -42,9 +42,8 @@ public class OrmawaMapper {
         entity.setDescription(request.getDescription());
         entity.setContent(request.getContent());
         entity.setIsOpenRegistration(request.getIsOpenRegistration());
-        entity.setIcon(request.getIcon());
-        entity.setBackground(request.getBackground());
-
+        entity.setIcon(iconUrl);
+        entity.setBackground(bgUrl);
         return entity;
     }
 
@@ -72,13 +71,19 @@ public class OrmawaMapper {
     }
 
     // === REQUEST → EXISTING ENTITY (Update) ===
-    public static void updateEntityFromRequest(OrmawaEntity entity, OrmawaRequest request) {
+    public static void updateEntityFromRequest(OrmawaEntity entity, OrmawaRequest request, String iconUrl, String bgUrl) {
         entity.setOrmawaName(request.getOrmawaName());
         entity.setDescription(request.getDescription());
         entity.setContent(request.getContent());
         entity.setIsOpenRegistration(request.getIsOpenRegistration());
-        entity.setIcon(request.getIcon());
-        entity.setBackground(request.getBackground());
+
+        if (iconUrl != null) {
+            entity.setIcon(iconUrl);
+        }
+
+        if (bgUrl != null) {
+            entity.setBackground(bgUrl);
+        }
 
         if (entity instanceof OrmawaLaboratoryEntity lab && request.getLabType() != null) {
             lab.setLabType(request.getLabType());

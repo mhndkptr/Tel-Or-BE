@@ -1,27 +1,34 @@
 package com.pbo.telor.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pbo.telor.dto.request.OrmawaRequest;
-import com.pbo.telor.dto.response.OrmawaResponse;
-import com.pbo.telor.enums.OrmawaCategory;
-import com.pbo.telor.service.OrmawaService;
-import com.pbo.telor.utils.JwtUtil;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pbo.telor.dto.response.OrmawaResponse;
+import com.pbo.telor.enums.OrmawaCategory;
+import com.pbo.telor.mapper.OrmawaMapper;
+import com.pbo.telor.repository.OrmawaRepository;
+import com.pbo.telor.service.OrmawaService;
+import com.pbo.telor.service.UploadService;
+import com.pbo.telor.utils.JwtUtil;
 
 @WebMvcTest(value = OrmawaController.class, excludeAutoConfiguration = {
                 org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class,
@@ -33,6 +40,15 @@ class OrmawaControllerTest {
 
         @Autowired
         private MockMvc mockMvc;
+
+        @MockBean
+        private UploadService uploadService;
+
+        @MockBean
+        private OrmawaMapper ormawaMapper;
+
+        @MockBean
+        private OrmawaRepository ormawaRepository;
 
         @MockBean
         private OrmawaService ormawaService;
@@ -66,75 +82,77 @@ class OrmawaControllerTest {
 
         @Test
         void createOrmawa_shouldReturnCreatedOrmawa() throws Exception {
-                OrmawaRequest request = OrmawaRequest.builder()
-                                .ormawaName("New Ormawa")
-                                .category(OrmawaCategory.ORGANIZATION)
-                                .build();
-
                 OrmawaResponse response = OrmawaResponse.builder()
-                                .id(UUID.randomUUID())
-                                .ormawaName("New Ormawa")
-                                .category(OrmawaCategory.ORGANIZATION)
-                                .build();
+                        .id(UUID.randomUUID())
+                        .ormawaName("New Ormawa")
+                        .category(OrmawaCategory.ORGANIZATION)
+                        .build();
 
                 when(ormawaService.createOrmawa(any())).thenReturn(response);
 
-                mockMvc.perform(post("/api/v1/ormawa")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request)))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.data.ormawaName").value("New Ormawa"))
-                                .andExpect(jsonPath("$.data.category").value("ORGANIZATION"));
+                mockMvc.perform(multipart("/api/v1/ormawa")
+                        .file(new MockMultipartFile("icon", "icon.png", "image/png", "dummy".getBytes()))
+                        .file(new MockMultipartFile("background", "bg.png", "image/png", "dummy".getBytes()))
+                        .param("ormawaName", "New Ormawa")
+                        .param("description", "desc")
+                        .param("content", "content")
+                        .param("isOpenRegistration", "true")
+                        .param("category", "ORGANIZATION")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.ormawaName").value("New Ormawa"))
+                .andExpect(jsonPath("$.data.category").value("ORGANIZATION"));
         }
 
         @Test
         void updateOrmawa_shouldReturnUpdatedOrmawa() throws Exception {
                 UUID id = UUID.randomUUID();
-                OrmawaRequest request = OrmawaRequest.builder()
-                                .ormawaName("Updated Ormawa")
-                                .category(OrmawaCategory.ORGANIZATION)
-                                .build();
-
                 OrmawaResponse response = OrmawaResponse.builder()
-                                .id(id)
-                                .ormawaName("Updated Ormawa")
-                                .category(OrmawaCategory.ORGANIZATION)
-                                .build();
+                        .id(id)
+                        .ormawaName("Updated Ormawa")
+                        .category(OrmawaCategory.ORGANIZATION)
+                        .build();
 
                 when(ormawaService.updateOrmawa(eq(id), any())).thenReturn(response);
 
-                mockMvc.perform(put("/api/v1/ormawa/{ormawaId}", id)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request)))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.data.id").value(id.toString()))
-                                .andExpect(jsonPath("$.data.ormawaName").value("Updated Ormawa"))
-                                .andExpect(jsonPath("$.data.category").value("ORGANIZATION"));
+                mockMvc.perform(multipart("/api/v1/ormawa/{ormawaId}", id)
+                        .file(new MockMultipartFile("icon", "icon.png", "image/png", "dummy".getBytes()))
+                        .file(new MockMultipartFile("background", "bg.png", "image/png", "dummy".getBytes()))
+                        .param("ormawaName", "Updated Ormawa")
+                        .param("category", "ORGANIZATION")
+                        .with(request -> { request.setMethod("PUT"); return request; }) // agar multipart jadi PUT
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(id.toString()))
+                .andExpect(jsonPath("$.data.ormawaName").value("Updated Ormawa"))
+                .andExpect(jsonPath("$.data.category").value("ORGANIZATION"));
         }
 
         @Test
         void patchOrmawa_shouldReturnPatchedOrmawa() throws Exception {
                 UUID id = UUID.randomUUID();
-                OrmawaRequest request = OrmawaRequest.builder()
-                                .ormawaName("Patched Ormawa")
-                                .category(OrmawaCategory.COMMUNITY)
-                                .build();
-
                 OrmawaResponse response = OrmawaResponse.builder()
-                                .id(id)
-                                .ormawaName("Patched Ormawa")
-                                .category(OrmawaCategory.COMMUNITY)
-                                .build();
+                        .id(id)
+                        .ormawaName("Patched Ormawa")
+                        .category(OrmawaCategory.COMMUNITY)
+                        .build();
 
                 when(ormawaService.patchOrmawa(eq(id), any())).thenReturn(response);
 
-                mockMvc.perform(patch("/api/v1/ormawa/{ormawaId}", id)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request)))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.data.id").value(id.toString()))
-                                .andExpect(jsonPath("$.data.ormawaName").value("Patched Ormawa"))
-                                .andExpect(jsonPath("$.data.category").value("COMMUNITY"));
+                mockMvc.perform(multipart("/api/v1/ormawa/{ormawaId}", id)
+                        .file(new MockMultipartFile("icon", "icon.png", "image/png", "dummy".getBytes()))
+                        .file(new MockMultipartFile("background", "bg.png", "image/png", "dummy".getBytes()))
+                        .param("ormawaName", "Patched Ormawa")
+                        .param("category", "COMMUNITY")
+                        .with(request -> { request.setMethod("PATCH"); return request; }) // agar multipart jadi PATCH
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(id.toString()))
+                .andExpect(jsonPath("$.data.ormawaName").value("Patched Ormawa"))
+                .andExpect(jsonPath("$.data.category").value("COMMUNITY"));
         }
 
         @Test
