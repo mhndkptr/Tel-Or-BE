@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,24 +60,24 @@ public class OrmawaController {
         return ResponseUtil.ok(data, "Successfully retrieved Ormawa");
     }
 
-    @PostMapping
-    public ResponseEntity<BaseResponse<OrmawaResponse>> createOrmawa(@RequestBody OrmawaRequest request) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<BaseResponse<OrmawaResponse>> createOrmawa(@ModelAttribute OrmawaRequest request) {
         OrmawaResponse data = ormawaService.createOrmawa(request);
         return ResponseUtil.ok(data, "Successfully created Ormawa");
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<BaseResponse<OrmawaResponse>> updateOrmawa(
             @PathVariable UUID id,
-            @RequestBody OrmawaRequest request) {
+            @ModelAttribute OrmawaRequest request) {
         OrmawaResponse data = ormawaService.updateOrmawa(id, request);
         return ResponseUtil.ok(data, "Successfully updated Ormawa");
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<BaseResponse<OrmawaResponse>> patchOrmawa(
             @PathVariable UUID id,
-            @RequestBody OrmawaRequest patchData) {
+            @ModelAttribute OrmawaRequest patchData) {
         OrmawaResponse data = ormawaService.patchOrmawa(id, patchData);
         return ResponseUtil.ok(data, "Successfully patched Ormawa");
     }

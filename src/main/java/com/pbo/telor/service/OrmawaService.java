@@ -26,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 public class OrmawaService {
 
     private final OrmawaRepository ormawaRepository;
+    private final UploadService uploadService;
+    private final OrmawaMapper ormawaMapper;
 
     public List<OrmawaResponse> findAll() {
         return ormawaRepository.findAll()
@@ -46,58 +48,51 @@ public class OrmawaService {
     }
 
     public OrmawaResponse createOrmawa(OrmawaRequest request) {
-        OrmawaEntity entity;
+        String iconUrl = uploadService.saveFile("ormawa/icon", request.getIcon());
+        String bgUrl = uploadService.saveFile("ormawa/background", request.getBackground());
 
-        OrmawaCategory type = request.getCategory();
-
-        switch (type) {
-            case COMMUNITY -> entity = new OrmawaCommunityEntity();
-            case ORGANIZATION -> entity = new OrmawaOrganizationEntity();
-            case LAB -> {
-                OrmawaLaboratoryEntity lab = new OrmawaLaboratoryEntity();
-                lab.setLabType(request.getLabType());
-                entity = lab;
-            }
-            case UKM -> {
-                OrmawaUKMEntity ukm = new OrmawaUKMEntity();
-                ukm.setUkmCategory(request.getUkmCategory());
-                entity = ukm;
-            }
-            default -> throw new IllegalArgumentException("Unsupported ormawa category: " + type);
-        }
-
-        entity.setCategory(type);
-        entity.setOrmawaName(request.getOrmawaName());
-        entity.setDescription(request.getDescription());
-        entity.setContent(request.getContent());
-        entity.setIsOpenRegistration(request.getIsOpenRegistration());
-        entity.setIcon(request.getIcon());
-        entity.setBackground(request.getBackground());
+        OrmawaEntity entity = ormawaMapper.fillEntityFromRequest(request, iconUrl, bgUrl);
 
         OrmawaEntity saved = ormawaRepository.save(entity);
-        return OrmawaMapper.toResponse(saved);
+        return ormawaMapper.toResponse(saved);
     }
 
     public OrmawaResponse updateOrmawa(UUID id, OrmawaRequest request) {
         OrmawaEntity entity = ormawaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Ormawa not found with ID: " + id));
 
-        OrmawaMapper.updateEntityFromRequest(entity, request);
+        String iconUrl = (request.getIcon() != null && !request.getIcon().isEmpty())
+                ? uploadService.saveFile("ormawa/icon", request.getIcon())
+                : null;
+
+        String bgUrl = (request.getBackground() != null && !request.getBackground().isEmpty())
+                ? uploadService.saveFile("ormawa/background", request.getBackground())
+                : null;
+
+        ormawaMapper.updateEntityFromRequest(entity, request, iconUrl, bgUrl);
         OrmawaEntity updated = ormawaRepository.save(entity);
-        return OrmawaMapper.toResponse(updated);
+        return ormawaMapper.toResponse(updated);
     }
 
     public OrmawaResponse patchOrmawa(UUID id, OrmawaRequest request) {
         OrmawaEntity entity = ormawaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Ormawa not found with ID: " + id));
 
-        if (request.getOrmawaName() != null) entity.setOrmawaName(request.getOrmawaName());
-        if (request.getDescription() != null) entity.setDescription(request.getDescription());
-        if (request.getContent() != null) entity.setContent(request.getContent());
-        if (request.getIsOpenRegistration() != null) entity.setIsOpenRegistration(request.getIsOpenRegistration());
-        if (request.getIcon() != null) entity.setIcon(request.getIcon());
-        if (request.getBackground() != null) entity.setBackground(request.getBackground());
+        if (request.getOrmawaName() != null)
+            entity.setOrmawaName(request.getOrmawaName());
+        if (request.getDescription() != null)
+            entity.setDescription(request.getDescription());
+        if (request.getContent() != null)
+            entity.setContent(request.getContent());
+        if (request.getIsOpenRegistration() != null)
+            entity.setIsOpenRegistration(request.getIsOpenRegistration());
+        if (request.getIcon() != null && !request.getIcon().isEmpty()) {
+            entity.setIcon(uploadService.saveFile("ormawa/icon", request.getIcon()));
+        }
 
+        if (request.getBackground() != null && !request.getBackground().isEmpty()) {
+            entity.setBackground(uploadService.saveFile("ormawa/background", request.getBackground()));
+        }
         if (entity instanceof OrmawaLaboratoryEntity lab && request.getLabType() != null) {
             lab.setLabType(request.getLabType());
         }
