@@ -38,3 +38,4 @@ build/
 
 ### Assets ###
 /src/main/resources/public/assets/**
+/uploads/**
