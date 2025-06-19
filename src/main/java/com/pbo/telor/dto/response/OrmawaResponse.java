@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.pbo.telor.enums.LabType;
 import com.pbo.telor.enums.OrmawaCategory;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @Builder
 public class OrmawaResponse {
     private UUID id;
+    @Column(name = "name")
     private String ormawaName;
     private String description;
     private String content;

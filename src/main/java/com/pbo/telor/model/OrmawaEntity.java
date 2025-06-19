@@ -36,7 +36,7 @@ public abstract class OrmawaEntity {
     private UUID id;
 
     @NotBlank(message = "Ormawa name is required")
-    @Column(name = "ormawa_name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String ormawaName;
 
     @NotBlank(message = "Description is required")
