@@ -206,6 +206,9 @@ public class EventService {
     }
 
     public List<EventResponse> findAll() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return eventRepository.findAll()
+                .stream()
+                .map(EventMapper::toResponse)
+                .toList();
     }
 }

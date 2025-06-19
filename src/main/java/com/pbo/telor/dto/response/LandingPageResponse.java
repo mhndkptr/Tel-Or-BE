@@ -25,6 +25,9 @@ public class LandingPageResponse {
         private String image;
         private EventType eventType;
         private String startEvent;
+        private String description;
+        private String content;
+        private String eventRegion;
     }
 
     @Getter
@@ -35,5 +38,8 @@ public class LandingPageResponse {
         private String name;
         private String logoUrl;
         private int postCount;
+        private String description;
+        private String content;
+        private String category;
     }
 }
