@@ -30,6 +30,8 @@ jobs:
           echo SERVER_PORT=${{ secrets.SERVER_PORT }} >> .env
           echo SERVER_SECURITY_USERNAME=${{ secrets.SERVER_SECURITY_USERNAME }} >> .env
           echo SERVER_SECURITY_PASSWORD=${{ secrets.SERVER_SECURITY_PASSWORD }} >> .env
+          echo APP_ENVIRONMENT=${{ secrets.APP_ENVIRONMENT }} >> .env
+          echo APP_UPLOAD_DIR=${{ secrets.APP_UPLOAD_DIR }} >> .env
 
           cat .env
           echo "Environment variables loaded."
