@@ -1,11 +1,11 @@
 package com.pbo.telor.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.pbo.telor.dto.request.UserRequest;
 import com.pbo.telor.dto.response.UserResponse;
 import com.pbo.telor.exception.NotFoundException;
 import com.pbo.telor.mapper.UserMapper;
@@ -19,7 +19,7 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private UserRepository userRepository;
 
@@ -42,8 +42,13 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
-    public UserResponse create(UserEntity user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public UserResponse create(UserRequest request) {
+        UserEntity user = new UserEntity();
+        user.setFullname(request.fullname());
+        user.setEmail(request.email());
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setRole(request.role());
+
         return UserMapper.toResponse(userRepository.save(user));
     }
 
@@ -58,7 +63,7 @@ public class UserService {
 
     public UserResponse patchUser(UUID id, UserEntity patchData) {
         UserEntity user = userRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (patchData.getFullname() != null)
             user.setFullname(patchData.getFullname());
@@ -79,4 +84,3 @@ public class UserService {
         userRepository.deleteById(id);
     }
 }
-

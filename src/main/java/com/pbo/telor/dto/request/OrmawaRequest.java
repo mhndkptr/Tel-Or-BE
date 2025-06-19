@@ -11,8 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-import com.pbo.telor.model.EventEntity;
+import java.util.UUID;
+
 import jakarta.annotation.Nullable;
 
 @Getter
@@ -27,8 +27,7 @@ public class OrmawaRequest {
     private Boolean isOpenRegistration;
     private MultipartFile icon;
     private MultipartFile background;
-
-    /* private List<EventEntity> events; */
+    private UUID userId;
 
     private OrmawaCategory category;
 

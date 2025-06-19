@@ -1,5 +1,6 @@
 package com.pbo.telor.service;
 
+import com.pbo.telor.dto.request.UserRequest;
 import com.pbo.telor.dto.response.UserResponse;
 import com.pbo.telor.model.UserEntity;
 import com.pbo.telor.model.UserEntity.Role;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class UserServiceTest {
@@ -59,12 +61,12 @@ class UserServiceTest {
 
     @Test
     void shouldSaveUserAndReturnResponse_whenCreateCalled() {
-        UserEntity entity = UserEntity.builder()
-                .fullname("John Doe")
-                .email("john@example.com")
-                .password("password123")
-                .role(Role.ADMIN)
-                .build();
+        UserRequest request = new UserRequest(
+                "John Doe",
+                "john@example.com",
+                "password123",
+                Role.ADMIN);
+
         UserEntity savedEntity = UserEntity.builder()
                 .id(UUID.randomUUID())
                 .fullname("John Doe")
@@ -72,16 +74,21 @@ class UserServiceTest {
                 .password("encodedPassword")
                 .role(Role.ADMIN)
                 .build();
-        UserResponse response = new UserResponse(savedEntity.getId(), "John Doe", "john@example.com", Role.ADMIN);
 
-        when(passwordEncoder.encode(entity.getPassword())).thenReturn("encodedPassword");
+        UserResponse expectedResponse = new UserResponse(
+                savedEntity.getId(),
+                "John Doe",
+                "john@example.com",
+                Role.ADMIN);
+
+        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
         when(userRepository.save(any(UserEntity.class))).thenReturn(savedEntity);
 
-        UserResponse result = userService.create(entity);
+        UserResponse result = userService.create(request);
 
-        assertEquals(response, result);
+        assertEquals(expectedResponse, result);
         verify(passwordEncoder).encode("password123");
-        verify(userRepository).save(entity);
+        verify(userRepository).save(any(UserEntity.class));
     }
 
     @Test

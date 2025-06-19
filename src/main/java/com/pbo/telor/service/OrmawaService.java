@@ -17,7 +17,9 @@ import com.pbo.telor.model.OrmawaEntity;
 import com.pbo.telor.model.OrmawaLaboratoryEntity;
 import com.pbo.telor.model.OrmawaOrganizationEntity;
 import com.pbo.telor.model.OrmawaUKMEntity;
+import com.pbo.telor.model.UserEntity;
 import com.pbo.telor.repository.OrmawaRepository;
+import com.pbo.telor.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrmawaService {
 
+    private final UserRepository userRepository;
     private final OrmawaRepository ormawaRepository;
     private final UploadService uploadService;
     private final OrmawaMapper ormawaMapper;
@@ -52,7 +55,10 @@ public class OrmawaService {
         String bgUrl = uploadService.saveFile("ormawa/background", request.getBackground());
 
         OrmawaEntity entity = ormawaMapper.fillEntityFromRequest(request, iconUrl, bgUrl);
+        UserEntity user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
+        entity.setUser(user);
         OrmawaEntity saved = ormawaRepository.save(entity);
         return ormawaMapper.toResponse(saved);
     }

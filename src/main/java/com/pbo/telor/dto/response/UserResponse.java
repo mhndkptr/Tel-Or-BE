@@ -4,8 +4,8 @@ import java.util.UUID;
 import com.pbo.telor.model.UserEntity.Role;
 
 public record UserResponse(
-    UUID userId,
-    String fullname,
-    String email,
-    Role role
-) {}
+        UUID userId,
+        String fullname,
+        String email,
+        Role role) {
+}

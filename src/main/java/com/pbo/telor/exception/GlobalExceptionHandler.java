@@ -129,19 +129,38 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<BaseResponse<Object>> handleDuplicateConstraint(DataIntegrityViolationException ex) {
+    public ResponseEntity<BaseResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         String rawMessage = ex.getMostSpecificCause().getMessage();
-
         List<ValidationDetail> validations = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile("\\((.*?)\\)=");
-        Matcher matcher = pattern.matcher(rawMessage);
+        if (rawMessage != null) {
+            if (rawMessage.contains("violates not-null constraint")) {
+                Pattern pattern = Pattern.compile("null value in column \"(.*?)\"");
+                Matcher matcher = pattern.matcher(rawMessage);
 
-        if (matcher.find()) {
-            String fieldName = matcher.group(1);
-            validations.add(new ValidationDetail(fieldName, fieldName + " already exists"));
+                if (matcher.find()) {
+                    String fieldName = matcher.group(1);
+                    validations.add(new ValidationDetail(fieldName, fieldName + " must not be null"));
+                } else {
+                    validations.add(new ValidationDetail(null, "A required field is missing"));
+                }
+            } else if (rawMessage.contains("duplicate key value")) {
+                Pattern pattern = Pattern.compile("\\((.*?)\\)=");
+                Matcher matcher = pattern.matcher(rawMessage);
+
+                if (matcher.find()) {
+                    String fieldName = matcher.group(1);
+                    validations.add(new ValidationDetail(fieldName, fieldName + " already exists"));
+                } else {
+                    validations.add(new ValidationDetail(null, "Duplicate or invalid data"));
+                }
+            }
+
+            else {
+                validations.add(new ValidationDetail(null, "Data integrity violation: " + rawMessage));
+            }
         } else {
-            validations.add(new ValidationDetail(null, "Duplicate or invalid data"));
+            validations.add(new ValidationDetail(null, "Unknown data integrity error"));
         }
 
         return ResponseUtil.error(

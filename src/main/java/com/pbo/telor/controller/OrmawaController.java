@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pbo.telor.dto.common.BaseResponse;
 import com.pbo.telor.dto.common.PaginationResponse;
 import com.pbo.telor.dto.request.OrmawaRequest;
+import com.pbo.telor.dto.response.EventResponse;
 import com.pbo.telor.dto.response.OrmawaResponse;
 import com.pbo.telor.model.EventEntity;
 import com.pbo.telor.service.OrmawaService;
@@ -51,8 +51,7 @@ public class OrmawaController {
                         .totalItem(result.getTotalElements())
                         .limit(result.getSize())
                         .build(),
-                "Paged Ormawa fetched successfully"
-        );
+                "Paged Ormawa fetched successfully");
     }
 
     @GetMapping("/{id}")
@@ -60,8 +59,9 @@ public class OrmawaController {
         OrmawaResponse data = ormawaService.getOrmawaById(id);
         return ResponseUtil.ok(data, "Successfully retrieved Ormawa");
     }
+
     @GetMapping("/{id}/events")
-    public ResponseEntity<BaseResponse<List<EventEntity>>> getEventsByOrmawaId(@PathVariable UUID id) {
+    public ResponseEntity<BaseResponse<List<EventResponse>>> getEventsByOrmawaId(@PathVariable UUID id) {
         OrmawaResponse data = ormawaService.getOrmawaById(id);
         return ResponseUtil.ok(data.getEvents(), "Successfully retrieved Ormawa Events");
     }
