@@ -55,10 +55,12 @@ class FaqServiceTest {
 
     @Test
     void shouldSaveFaqAndReturnResponse_whenCreateFaqCalled() {
-        FaqRequest request = FaqRequest.builder().question("Q").answer("A").category("C").build();
+        FaqRequest request = new FaqRequest("Q", "A", "C");
         FaqEntity entity = FaqEntity.builder().question("Q").answer("A").category("C").build();
-        FaqEntity savedEntity = FaqEntity.builder().id(UUID.randomUUID()).question("Q").answer("A").category("C").build();
-        FaqResponse response = FaqResponse.builder().id(savedEntity.getId()).question("Q").answer("A").category("C").build();
+        FaqEntity savedEntity = FaqEntity.builder().id(UUID.randomUUID()).question("Q").answer("A").category("C")
+                .build();
+        FaqResponse response = FaqResponse.builder().id(savedEntity.getId()).question("Q").answer("A").category("C")
+                .build();
 
         when(faqMapper.toEntity(request)).thenReturn(entity);
         when(faqRepository.save(entity)).thenReturn(savedEntity);

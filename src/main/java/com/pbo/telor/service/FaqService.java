@@ -26,7 +26,7 @@ public class FaqService {
                 .collect(Collectors.toList());
     }
 
-    public Page<FaqResponse> findAllPaged(Integer page, Integer limit, String category,String search) {
+    public Page<FaqResponse> findAllPaged(Integer page, Integer limit, String category, String search) {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), limit);
         Page<FaqEntity> faqEntities;
         if (search != null && !search.isBlank()) {
@@ -56,9 +56,9 @@ public class FaqService {
         FaqEntity faq = faqRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("FAQ not found with id: " + id));
 
-        faq.setQuestion(request.getQuestion());
-        faq.setAnswer(request.getAnswer());
-        faq.setCategory(request.getCategory());
+        faq.setQuestion(request.question());
+        faq.setAnswer(request.answer());
+        faq.setCategory(request.category());
 
         FaqEntity updatedFaq = faqRepository.save(faq);
         return faqMapper.toResponse(updatedFaq);
