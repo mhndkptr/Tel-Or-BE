@@ -1,12 +1,13 @@
 package com.pbo.telor.dto.request;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pbo.telor.enums.EventType;
 import com.pbo.telor.enums.EventRegion;
+import com.pbo.telor.enums.EventType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,7 @@ public class EventRequest {
     private EventType eventType;
     private EventRegion eventRegion;
     private String prize;
+    private UUID ormawaId;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date startEvent;

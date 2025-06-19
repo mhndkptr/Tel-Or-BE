@@ -1,28 +1,29 @@
 package com.pbo.telor.model;
 
-import com.pbo.telor.enums.EventRegion;
-import com.pbo.telor.enums.EventType;
-
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.pbo.telor.enums.EventType;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.persistence.EnumType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -73,6 +74,10 @@ public abstract class EventEntity {
     @Column(name = "end_event", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date endEvent;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ormawa_id", nullable = false)
+    private OrmawaEntity ormawa;
 
     public int getDurationInDays() {
         long diff = endEvent.getTime() - startEvent.getTime();

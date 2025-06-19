@@ -56,7 +56,6 @@ class EventMapperTest {
         entity.setEventName("Old Name");
         entity.setDescription("Old Desc");
         entity.setContent("Old Content");
-        entity.setEventType(EventType.SEMINAR);
         Date start = new Date();
         Date end = new Date();
         entity.setStartEvent(start);
@@ -66,7 +65,6 @@ class EventMapperTest {
                 .eventName("Updated Event")
                 .description("Updated Description")
                 .content("Updated Content")
-                .eventType(EventType.LOMBA)
                 .startEvent(start)
                 .endEvent(end)
                 .build();
@@ -75,7 +73,6 @@ class EventMapperTest {
         assertEquals(eventRequest.getEventName(), entity.getEventName());
         assertEquals(eventRequest.getDescription(), entity.getDescription());
         assertEquals(eventRequest.getContent(), entity.getContent());
-        assertEquals(eventRequest.getEventType(), entity.getEventType());
         assertEquals(eventRequest.getStartEvent(), entity.getStartEvent());
         assertEquals(eventRequest.getEndEvent(), entity.getEndEvent());
     }
@@ -90,7 +87,6 @@ class EventMapperTest {
                 .eventName("Updated Event")
                 .description("Updated Description")
                 .content("Updated Content")
-                .eventType(EventType.LOMBA)
                 .startEvent(start)
                 .endEvent(end)
                 .build();
@@ -100,7 +96,6 @@ class EventMapperTest {
         assertEquals(eventRequest.getEventName(), entity.getEventName());
         assertEquals(eventRequest.getDescription(), entity.getDescription());
         assertEquals(eventRequest.getContent(), entity.getContent());
-        assertEquals(eventRequest.getEventType(), entity.getEventType());
         assertEquals(eventRequest.getStartEvent(), entity.getStartEvent());
         assertEquals(eventRequest.getEndEvent(), entity.getEndEvent());
     }

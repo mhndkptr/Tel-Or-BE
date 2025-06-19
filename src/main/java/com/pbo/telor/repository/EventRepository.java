@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.pbo.telor.enums.EventType;
 import com.pbo.telor.model.EventEntity;
+import com.pbo.telor.model.OrmawaEntity;
 
 
 @Repository
@@ -21,4 +22,5 @@ public interface EventRepository extends JpaRepository<EventEntity, UUID>, JpaSp
     @Query("SELECT e FROM EventEntity e WHERE e.startEvent >= :startDate AND e.endEvent <= :endDate")
     List<EventEntity> findByDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
     List<EventEntity> findTop3ByOrderByStartEventDesc();
+    List<EventEntity> findByOrmawa_Id(UUID id);
 }

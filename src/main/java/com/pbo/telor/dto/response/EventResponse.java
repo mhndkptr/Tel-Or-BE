@@ -28,4 +28,5 @@ public class EventResponse {
     private EventRegion eventRegion;
     private String startEvent;
     private String endEvent;
+    private UUID ormawaId;
 }

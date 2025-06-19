@@ -28,7 +28,8 @@ public class EventMapper {
                 .content(entity.getContent())
                 .eventType(entity.getEventType())
                 .startEvent(entity.getStartEvent() != null ? isoFormatter.format(entity.getStartEvent()) : null)
-                .endEvent(entity.getEndEvent() != null ? isoFormatter.format(entity.getEndEvent()) : null);
+                .endEvent(entity.getEndEvent() != null ? isoFormatter.format(entity.getEndEvent()) : null)
+                .ormawaId(entity.getOrmawa() != null ? entity.getOrmawa().getId() : null);
 
         if (entity instanceof EventLomba lomba) {
             builder.prize(lomba.getPrize());
@@ -50,8 +51,6 @@ public class EventMapper {
             entity.setDescription(request.getDescription());
         if (request.getContent() != null)
             entity.setContent(request.getContent());
-        if (request.getEventType() != null)
-            entity.setEventType(request.getEventType());
         if (request.getStartEvent() != null)
             entity.setStartEvent(request.getStartEvent());
         if (request.getEndEvent() != null)
