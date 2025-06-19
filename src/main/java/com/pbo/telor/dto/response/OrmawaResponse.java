@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import com.pbo.telor.model.EventEntity;
 
 @Getter
 @Setter
@@ -29,11 +28,12 @@ public class OrmawaResponse {
     private Boolean isOpenRegistration;
     private String icon;
     private String background;
-    
-    private List<EventEntity> events;
+
+    private List<EventResponse> events;
+    private UserResponse user;
 
     private OrmawaCategory category; // COMMUNITY, LABORATORY, UKM, ORGANIZATION
 
-    private LabType labType; //Praktikum, Research
+    private LabType labType; // Praktikum, Research
     private String ukmCategory;
 }
