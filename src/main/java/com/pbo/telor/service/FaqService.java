@@ -26,10 +26,13 @@ public class FaqService {
                 .collect(Collectors.toList());
     }
 
-    public Page<FaqResponse> findAllPaged(Integer page, Integer limit, String category) {
+    public Page<FaqResponse> findAllPaged(Integer page, Integer limit, String category,String search) {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), limit);
         Page<FaqEntity> faqEntities;
-        if (category != null && !category.isBlank()) {
+        if (search != null && !search.isBlank()) {
+            faqEntities = faqRepository.findByQuestionContainingIgnoreCaseOrAnswerContainingIgnoreCase(search, search,
+                    pageable);
+        } else if (category != null && !category.isBlank()) {
             faqEntities = faqRepository.findAllByCategory(category, pageable);
         } else {
             faqEntities = faqRepository.findAll(pageable);

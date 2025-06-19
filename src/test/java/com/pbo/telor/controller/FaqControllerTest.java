@@ -103,8 +103,8 @@ public class FaqControllerTest {
             .build());
     Page<FaqResponse> faqPage = new PageImpl<>(faqList, PageRequest.of(0, 10), 1);
 
-    Mockito.when(faqService.findAllPaged(anyInt(), anyInt(), any())).thenReturn(faqPage);
-
+    Mockito.when(faqService.findAllPaged(anyInt(), anyInt(), any(), any())).thenReturn(faqPage);
+    
     MvcResult result = mockMvc.perform(get("/api/v1/faqs?page=0&limit=10"))
         .andExpect(status().isOk())
         .andReturn();

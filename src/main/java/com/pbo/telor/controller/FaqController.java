@@ -37,9 +37,10 @@ public class FaqController {
         public ResponseEntity<BaseResponse<List<FaqResponse>>> getFaqsPaged(
                         @RequestParam(value = "page", defaultValue = "0") Integer page,
                         @RequestParam(value = "limit", defaultValue = "10") Integer limit,
-                        @RequestParam(value = "category", required = false) String category) {
+                        @RequestParam(value = "category", required = false) String category,
+                        @RequestParam(value = "search", required = false) String search) {
 
-                Page<FaqResponse> faqs = faqService.findAllPaged(page, limit, category);
+                Page<FaqResponse> faqs = faqService.findAllPaged(page, limit, category, search);
 
                 return ResponseUtil.paged(
                                 faqs.getContent(),
