@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.pbo.telor.enums.EventType;
 
 import jakarta.persistence.CollectionTable;
@@ -14,7 +15,6 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
@@ -75,8 +75,10 @@ public abstract class EventEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endEvent;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ormawa_id", nullable = false)
+
+    @ManyToOne
+    @JoinColumn(name = "ormawa_id")
+    @JsonBackReference
     private OrmawaEntity ormawa;
 
     public int getDurationInDays() {

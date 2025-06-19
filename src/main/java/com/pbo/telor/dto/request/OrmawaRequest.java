@@ -11,6 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+import com.pbo.telor.model.EventEntity;
+import jakarta.annotation.Nullable;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,8 +28,14 @@ public class OrmawaRequest {
     private MultipartFile icon;
     private MultipartFile background;
 
+    /* private List<EventEntity> events; */
+
     private OrmawaCategory category;
 
-    private LabType labType;         
-    private String ukmCategory;      
+    @Nullable
+    private LabType labType;
+
+    @Nullable
+    private String ukmCategory;
+
 }

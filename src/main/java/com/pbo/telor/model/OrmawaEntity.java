@@ -4,8 +4,10 @@ import java.util.UUID;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pbo.telor.enums.OrmawaCategory;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,6 +22,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.CascadeType;
 
 @Data
 @NoArgsConstructor
@@ -62,4 +68,11 @@ public abstract class OrmawaEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     private OrmawaCategory category;
+
+    // @OneToMany(mappedBy = "ormawa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ormawa")
+    @JsonManagedReference
+    private List<EventEntity> events;
+    // private List<EventEntity> events;
+
 }
