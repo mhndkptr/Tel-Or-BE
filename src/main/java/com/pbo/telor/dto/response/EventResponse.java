@@ -22,10 +22,10 @@ public class EventResponse {
     private String eventName;
     private List<String> image;
     private String description;
+    private String prize;
     private String content;
     private EventType eventType;
     private EventRegion eventRegion;
     private String startEvent;
     private String endEvent;
-    private int duration;
 }

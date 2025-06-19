@@ -37,7 +37,7 @@ class EventControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private EventService eventService; // harus ada, biar nggak ApplicationContext error
+    private EventService eventService;
 
     @MockBean
     private com.pbo.telor.utils.JwtUtil jwtUtil;
@@ -55,7 +55,6 @@ class EventControllerTest {
                 .eventRegion(EventRegion.Regional)
                 .startEvent("2025-06-01T10:00:00.000Z")
                 .endEvent("2025-06-02T10:00:00.000Z")
-                .duration(1)
                 .build();
     }
 

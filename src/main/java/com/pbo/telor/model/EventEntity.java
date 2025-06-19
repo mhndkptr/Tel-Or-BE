@@ -1,4 +1,5 @@
 package com.pbo.telor.model;
+
 import com.pbo.telor.enums.EventRegion;
 import com.pbo.telor.enums.EventType;
 
@@ -72,11 +73,6 @@ public abstract class EventEntity {
     @Column(name = "end_event", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date endEvent;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "region")
-    private EventRegion region;
-
 
     public int getDurationInDays() {
         long diff = endEvent.getTime() - startEvent.getTime();
