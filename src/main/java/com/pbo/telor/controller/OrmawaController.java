@@ -21,6 +21,7 @@ import com.pbo.telor.dto.common.BaseResponse;
 import com.pbo.telor.dto.common.PaginationResponse;
 import com.pbo.telor.dto.request.OrmawaRequest;
 import com.pbo.telor.dto.response.OrmawaResponse;
+import com.pbo.telor.model.EventEntity;
 import com.pbo.telor.service.OrmawaService;
 import com.pbo.telor.utils.ResponseUtil;
 
@@ -58,6 +59,11 @@ public class OrmawaController {
     public ResponseEntity<BaseResponse<OrmawaResponse>> getOrmawaById(@PathVariable UUID id) {
         OrmawaResponse data = ormawaService.getOrmawaById(id);
         return ResponseUtil.ok(data, "Successfully retrieved Ormawa");
+    }
+    @GetMapping("/{id}/events")
+    public ResponseEntity<BaseResponse<List<EventEntity>>> getEventsByOrmawaId(@PathVariable UUID id) {
+        OrmawaResponse data = ormawaService.getOrmawaById(id);
+        return ResponseUtil.ok(data.getEvents(), "Successfully retrieved Ormawa Events");
     }
 
     @PostMapping(consumes = "multipart/form-data")

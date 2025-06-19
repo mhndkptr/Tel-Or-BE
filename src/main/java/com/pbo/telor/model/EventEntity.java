@@ -75,8 +75,8 @@ public abstract class EventEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endEvent;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ormawa_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "ormawa_id")
     private OrmawaEntity ormawa;
 
     public int getDurationInDays() {
