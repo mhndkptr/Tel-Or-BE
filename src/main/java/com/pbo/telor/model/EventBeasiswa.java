@@ -21,8 +21,8 @@ import lombok.NoArgsConstructor;
 public class EventBeasiswa extends EventEntity {
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "stage")
-    private EventRegion stage;
+    @Column(name = "event_region")
+    private EventRegion eventRegion;
 
     @Column(name = "prize")
     private String prize;

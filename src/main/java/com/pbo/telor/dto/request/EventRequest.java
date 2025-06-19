@@ -1,4 +1,5 @@
 package com.pbo.telor.dto.request;
+
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,7 +27,7 @@ public class EventRequest {
     private EventType eventType;
     private EventRegion eventRegion;
     private String prize;
-    
+
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date startEvent;
 

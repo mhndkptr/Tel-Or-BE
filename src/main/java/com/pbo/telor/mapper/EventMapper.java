@@ -6,9 +6,10 @@ import java.util.TimeZone;
 
 import com.pbo.telor.dto.request.EventRequest;
 import com.pbo.telor.dto.response.EventResponse;
+import com.pbo.telor.model.EventBeasiswa;
 import com.pbo.telor.model.EventEntity;
-
-
+import com.pbo.telor.model.EventLomba;
+import com.pbo.telor.model.EventSeminar;
 
 public class EventMapper {
 
@@ -19,7 +20,7 @@ public class EventMapper {
     }
 
     public static EventResponse toResponse(EventEntity entity) {
-        return EventResponse.builder()
+        EventResponse.EventResponseBuilder builder = EventResponse.builder()
                 .eventId(entity.getEventId())
                 .eventName(entity.getEventName())
                 .image(entity.getImage())
@@ -27,18 +28,34 @@ public class EventMapper {
                 .content(entity.getContent())
                 .eventType(entity.getEventType())
                 .startEvent(entity.getStartEvent() != null ? isoFormatter.format(entity.getStartEvent()) : null)
-                .endEvent(entity.getEndEvent() != null ? isoFormatter.format(entity.getEndEvent()) : null)
-                .duration(entity.getDurationInDays())
-                .build();
+                .endEvent(entity.getEndEvent() != null ? isoFormatter.format(entity.getEndEvent()) : null);
+
+        if (entity instanceof EventLomba lomba) {
+            builder.prize(lomba.getPrize());
+            builder.eventRegion(lomba.getEventRegion());
+        } else if (entity instanceof EventBeasiswa beasiswa) {
+            builder.prize(beasiswa.getPrize());
+            builder.eventRegion(beasiswa.getEventRegion());
+        } else if (entity instanceof EventSeminar seminar) {
+            builder.eventRegion(seminar.getEventRegion());
+        }
+
+        return builder.build();
     }
 
     public static void updateEntityFromRequest(EventEntity entity, EventRequest request) {
-        if (request.getEventName() != null) entity.setEventName(request.getEventName());
-        if (request.getDescription() != null) entity.setDescription(request.getDescription());
-        if (request.getContent() != null) entity.setContent(request.getContent());
-        if (request.getEventType() != null) entity.setEventType(request.getEventType());
-        if (request.getStartEvent() != null) entity.setStartEvent(request.getStartEvent());
-        if (request.getEndEvent() != null) entity.setEndEvent(request.getEndEvent());
+        if (request.getEventName() != null)
+            entity.setEventName(request.getEventName());
+        if (request.getDescription() != null)
+            entity.setDescription(request.getDescription());
+        if (request.getContent() != null)
+            entity.setContent(request.getContent());
+        if (request.getEventType() != null)
+            entity.setEventType(request.getEventType());
+        if (request.getStartEvent() != null)
+            entity.setStartEvent(request.getStartEvent());
+        if (request.getEndEvent() != null)
+            entity.setEndEvent(request.getEndEvent());
     }
 
     public static void fillEntityFromRequest(EventEntity entity, EventRequest request, List<String> imageUrls) {

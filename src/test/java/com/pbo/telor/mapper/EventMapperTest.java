@@ -48,7 +48,6 @@ class EventMapperTest {
         assertEquals(eventEntity.getEventType(), response.getEventType());
         assertEquals("2025-06-01T10:00:00.000Z", response.getStartEvent());
         assertEquals("2025-06-03T10:00:00.000Z", response.getEndEvent());
-        assertEquals(2, response.getDuration());
     }
 
     @Test
