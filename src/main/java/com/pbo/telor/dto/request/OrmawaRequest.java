@@ -11,10 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.UUID;
 
-import com.pbo.telor.model.EventEntity;
 import jakarta.annotation.Nullable;
 
 @Getter
