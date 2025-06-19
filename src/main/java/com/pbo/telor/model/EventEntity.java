@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -73,6 +74,10 @@ public abstract class EventEntity {
     @Column(name = "end_event", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date endEvent;
+
+    @ManyToOne
+    @JoinColumn(name = "ormawa_id")
+    private OrmawaEntity ormawa;
 
     public int getDurationInDays() {
         long diff = endEvent.getTime() - startEvent.getTime();

@@ -25,11 +25,17 @@ public class OrmawaMapper {
             case ORGANIZATION -> entity = new OrmawaOrganizationEntity();
             case LAB -> {
                 OrmawaLaboratoryEntity lab = new OrmawaLaboratoryEntity();
+                if (request.getLabType() == null) {
+                    throw new IllegalArgumentException("Lab type must be filled if category is LAB");
+                }
                 lab.setLabType(request.getLabType());
                 entity = lab;
             }
             case UKM -> {
                 OrmawaUKMEntity ukm = new OrmawaUKMEntity();
+                if (request.getUkmCategory() == null || request.getUkmCategory().isBlank()) {
+                    throw new IllegalArgumentException("UKM Category must be filled if category is UKM");
+                }
                 ukm.setUkmCategory(request.getUkmCategory());
                 entity = ukm;
             }
@@ -44,6 +50,7 @@ public class OrmawaMapper {
         entity.setIsOpenRegistration(request.getIsOpenRegistration());
         entity.setIcon(iconUrl);
         entity.setBackground(bgUrl);
+        // entity.setEvents(request.getEvents());
         return entity;
     }
 
@@ -57,7 +64,8 @@ public class OrmawaMapper {
                 .isOpenRegistration(entity.getIsOpenRegistration())
                 .icon(entity.getIcon())
                 .background(entity.getBackground())
-                .category(entity.getCategory());
+                .category(entity.getCategory())
+                .events(entity.getEvents());
 
         if (entity instanceof OrmawaLaboratoryEntity lab) {
             builder.labType(lab.getLabType());
@@ -71,7 +79,8 @@ public class OrmawaMapper {
     }
 
     // === REQUEST → EXISTING ENTITY (Update) ===
-    public static void updateEntityFromRequest(OrmawaEntity entity, OrmawaRequest request, String iconUrl, String bgUrl) {
+    public static void updateEntityFromRequest(OrmawaEntity entity, OrmawaRequest request, String iconUrl,
+            String bgUrl) {
         entity.setOrmawaName(request.getOrmawaName());
         entity.setDescription(request.getDescription());
         entity.setContent(request.getContent());
@@ -92,5 +101,8 @@ public class OrmawaMapper {
         if (entity instanceof OrmawaUKMEntity ukm && request.getUkmCategory() != null) {
             ukm.setUkmCategory(request.getUkmCategory());
         }
+        // if (request.getEvents() != null) {
+        // entity.setEvents(request.getEvents());
+        // }
     }
 }
