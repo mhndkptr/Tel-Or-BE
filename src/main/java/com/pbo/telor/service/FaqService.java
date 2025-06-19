@@ -70,4 +70,11 @@ public class FaqService {
         }
         faqRepository.deleteById(id);
     }
+
+    public List<FaqResponse> getAllFaqsByCategory(String category) {
+        return faqRepository.findAllByCategory(category, Pageable.unpaged())
+                .stream()
+                .map(faqMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 }
