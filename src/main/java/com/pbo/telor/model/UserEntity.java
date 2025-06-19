@@ -1,9 +1,11 @@
 package com.pbo.telor.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*; 
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.util.UUID;
 
@@ -44,4 +46,9 @@ public class UserEntity {
         ADMIN,
         ORGANIZER
     }
+
+    @OneToOne()
+    @JoinColumn(name = "ormawa_id", unique = true)
+    @JsonBackReference
+    private OrmawaEntity ormawa;
 }

@@ -1,5 +1,7 @@
 package com.pbo.telor.mapper;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.pbo.telor.dto.request.OrmawaRequest;
@@ -63,9 +65,11 @@ public class OrmawaMapper {
                 .content(entity.getContent())
                 .isOpenRegistration(entity.getIsOpenRegistration())
                 .icon(entity.getIcon())
+                .user(UserMapper.toResponse(entity.getUser()))
                 .background(entity.getBackground())
                 .category(entity.getCategory())
-                .events(entity.getEvents());
+                .events(entity.getEvents() == null ? List.of()
+                        : entity.getEvents().stream().map(EventMapper::toResponse).toList());
 
         if (entity instanceof OrmawaLaboratoryEntity lab) {
             builder.labType(lab.getLabType());
