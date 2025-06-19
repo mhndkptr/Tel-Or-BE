@@ -15,17 +15,16 @@ class FaqMapperTest {
 
     @Test
     void toEntity_shouldMapRequestToEntity() {
-        FaqRequest request = FaqRequest.builder()
-                .question("Apa itu Tel-Or?")
-                .answer("Tel-Or adalah aplikasi buatan anak Telkom.")
-                .category("umum")
-                .build();
+        FaqRequest request = new FaqRequest(
+                "Apa itu Tel-Or?",
+                "Tel-Or adalah aplikasi buatan anak Telkom.",
+                "umum");
 
         FaqEntity entity = faqMapper.toEntity(request);
 
-        assertEquals(request.getQuestion(), entity.getQuestion());
-        assertEquals(request.getAnswer(), entity.getAnswer());
-        assertEquals(request.getCategory(), entity.getCategory());
+        assertEquals(request.question(), entity.getQuestion());
+        assertEquals(request.answer(), entity.getAnswer());
+        assertEquals(request.category(), entity.getCategory());
     }
 
     @Test

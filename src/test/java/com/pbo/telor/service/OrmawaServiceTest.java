@@ -34,7 +34,9 @@ import com.pbo.telor.exception.NotFoundException;
 import com.pbo.telor.mapper.OrmawaMapper;
 import com.pbo.telor.model.OrmawaCommunityEntity;
 import com.pbo.telor.model.OrmawaEntity;
+import com.pbo.telor.model.UserEntity;
 import com.pbo.telor.repository.OrmawaRepository;
+import com.pbo.telor.repository.UserRepository;
 
 class OrmawaServiceTest {
 
@@ -49,6 +51,9 @@ class OrmawaServiceTest {
 
     @Mock
     private OrmawaMapper ormawaMapper;
+
+    @Mock
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
@@ -141,9 +146,15 @@ class OrmawaServiceTest {
         when(request.getIcon()).thenReturn(iconFile);
         when(request.getBackground()).thenReturn(bgFile);
 
+        UUID userId = UUID.randomUUID();
+        when(request.getUserId()).thenReturn(userId);
+        UserEntity user = mock(UserEntity.class);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
         when(uploadService.saveFile(anyString(), any(MultipartFile.class))).thenReturn("some-url");
         OrmawaEntity savedEntity = createSampleOrmawa();
-        when(ormawaMapper.fillEntityFromRequest(any(), anyString(), anyString())).thenReturn(new OrmawaCommunityEntity());
+        when(ormawaMapper.fillEntityFromRequest(any(), anyString(), anyString()))
+                .thenReturn(new OrmawaCommunityEntity());
         when(ormawaRepository.save(any(OrmawaEntity.class))).thenReturn(savedEntity);
         OrmawaResponse response = mock(OrmawaResponse.class);
 
@@ -172,9 +183,15 @@ class OrmawaServiceTest {
         when(request.getIcon()).thenReturn(iconFile);
         when(request.getBackground()).thenReturn(bgFile);
 
+        UUID userId = UUID.randomUUID();
+        when(request.getUserId()).thenReturn(userId);
+        UserEntity user = mock(UserEntity.class);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
         when(uploadService.saveFile(anyString(), any(MultipartFile.class))).thenReturn("some-url");
         OrmawaEntity savedEntity = createSampleOrmawa();
-        when(ormawaMapper.fillEntityFromRequest(any(), anyString(), anyString())).thenReturn(new OrmawaCommunityEntity());
+        when(ormawaMapper.fillEntityFromRequest(any(), anyString(), anyString()))
+                .thenReturn(new OrmawaCommunityEntity());
         when(ormawaRepository.save(any(OrmawaEntity.class))).thenReturn(savedEntity);
         OrmawaResponse response = mock(OrmawaResponse.class);
 
@@ -198,7 +215,8 @@ class OrmawaServiceTest {
         OrmawaResponse response = mock(OrmawaResponse.class);
 
         try (var mocked = mockStatic(OrmawaMapper.class)) {
-            mocked.when(() -> OrmawaMapper.updateEntityFromRequest(entity, request, "icon.png", "background.png")).thenCallRealMethod();
+            mocked.when(() -> OrmawaMapper.updateEntityFromRequest(entity, request, "icon.png", "background.png"))
+                    .thenCallRealMethod();
             mocked.when(() -> OrmawaMapper.toResponse(entity)).thenReturn(response);
 
             OrmawaResponse result = ormawaService.updateOrmawa(id, request);

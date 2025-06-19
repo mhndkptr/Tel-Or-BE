@@ -47,6 +47,7 @@ class OrmawaMapperTest {
         assertEquals("desc", entity.getDescription());
         assertEquals("content", entity.getContent());
         assertTrue(entity.getIsOpenRegistration());
+        assertTrue(entity.getIsOpenRegistration());
         assertEquals("icon.png", entity.getIcon());
         assertEquals("bg.png", entity.getBackground());
         assertEquals(OrmawaCategory.COMMUNITY, entity.getCategory());
@@ -143,6 +144,7 @@ class OrmawaMapperTest {
         entity.setIcon("icon.png");
         entity.setBackground("bg.png");
         entity.setCategory(OrmawaCategory.COMMUNITY);
+        entity.setUser(mock(com.pbo.telor.model.UserEntity.class));
 
         OrmawaResponse response = OrmawaMapper.toResponse(entity);
 
@@ -163,6 +165,7 @@ class OrmawaMapperTest {
         entity.setId(UUID.randomUUID());
         entity.setOrmawaName("Lab");
         entity.setCategory(OrmawaCategory.LAB);
+        entity.setUser(mock(com.pbo.telor.model.UserEntity.class)); 
 
         OrmawaResponse response = OrmawaMapper.toResponse(entity);
 
@@ -176,6 +179,7 @@ class OrmawaMapperTest {
         entity.setId(UUID.randomUUID());
         entity.setOrmawaName("UKM");
         entity.setCategory(OrmawaCategory.UKM);
+        entity.setUser(mock(com.pbo.telor.model.UserEntity.class)); 
 
         OrmawaResponse response = OrmawaMapper.toResponse(entity);
 

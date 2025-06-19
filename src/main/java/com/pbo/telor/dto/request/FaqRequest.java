@@ -1,16 +1,14 @@
 package com.pbo.telor.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class FaqRequest {
-    private String question;
-    private String answer;
-    private String category;
-} 
+public record FaqRequest(
+    @NotBlank(message = "Question is required")
+    String question,
+
+    @NotBlank(message = "Answer is required")
+    String answer,
+
+    @NotBlank(message = "Category is required")
+    String category
+) {}

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 public class FaqMapper {
     public FaqEntity toEntity(FaqRequest request) {
         return FaqEntity.builder()
-                .question(request.getQuestion())
-                .answer(request.getAnswer())
-                .category(request.getCategory())
+                .question(request.question())
+                .answer(request.answer())
+                .category(request.category())
                 .build();
     }
 
