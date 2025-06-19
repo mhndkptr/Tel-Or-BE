@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pbo.telor.enums.OrmawaCategory;
 
 import io.micrometer.common.lang.Nullable;
@@ -68,7 +69,10 @@ public abstract class OrmawaEntity {
     @Column(name = "category", nullable = false)
     private OrmawaCategory category;
 
-    @OneToMany(mappedBy = "ormawa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    // @OneToMany(mappedBy = "ormawa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ormawa")
+    @JsonManagedReference
     private List<EventEntity> events;
+    // private List<EventEntity> events;
 
 }
