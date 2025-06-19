@@ -46,9 +46,10 @@ public class EventController {
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "type", required = false) EventType type,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
-            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
+            @RequestParam(value = "ormawaId", required = false) UUID ormawaId
     ) {
-        Page<EventResponse> events = eventService.findAllFiltered(page, limit, keyword, type, startDate, endDate);
+        Page<EventResponse> events = eventService.findAllFiltered(page, limit, keyword, type, startDate, endDate, ormawaId);
 
         return ResponseUtil.paged(
                 events.getContent(),
@@ -85,17 +86,6 @@ public class EventController {
         EventResponse event = eventService.updateEvent(id, request);
         return ResponseUtil.ok(event, "Successfully updated event");
     }
-
-
-    @PatchMapping(value = "/{id}", consumes = "multipart/form-data")
-    public ResponseEntity<BaseResponse<EventResponse>> patchEvent(
-            @PathVariable UUID id,
-            @ModelAttribute @Valid EventRequest request) {
-
-        EventResponse event = eventService.patchEvent(id, request);
-        return ResponseUtil.ok(event, "Successfully patched event");
-    }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<Object>> deleteEvent(@PathVariable UUID id) {

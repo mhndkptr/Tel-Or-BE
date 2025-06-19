@@ -29,7 +29,10 @@ import com.pbo.telor.enums.EventRegion;
 import com.pbo.telor.enums.EventType;
 import com.pbo.telor.model.EventEntity;
 import com.pbo.telor.model.EventSeminar;
+import com.pbo.telor.model.OrmawaCommunityEntity;
 import com.pbo.telor.repository.EventRepository;
+import com.pbo.telor.model.OrmawaEntity;
+import com.pbo.telor.repository.OrmawaRepository;
 
 class EventServiceTest {
 
@@ -37,13 +40,28 @@ class EventServiceTest {
     private EventRepository eventRepository;
     @Mock
     private UploadService uploadService;
+    @Mock
+    private OrmawaRepository ormawaRepository;
 
     @InjectMocks
     private EventService eventService;
 
+    private UUID ormawaId;
+    private OrmawaEntity ormawaEntity;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        ormawaId = UUID.randomUUID();
+        ormawaEntity = new OrmawaCommunityEntity();
+        ormawaEntity.setId(ormawaId);
+        ormawaEntity.setOrmawaName("HIMSI");
+        ormawaEntity.setDescription("desc");
+        ormawaEntity.setContent("content");
+        ormawaEntity.setIsOpenRegistration(true);
+        ormawaEntity.setIcon("icon.png");
+        ormawaEntity.setBackground("bg.png");
+        ormawaEntity.setCategory(null);
     }
 
     private EventSeminar createSampleEvent() {
@@ -93,7 +111,8 @@ class EventServiceTest {
     @Test
     void givenValidRequest_whenCreateEvent_thenSavesAndReturnsEventResponse() {
         EventRequest request = mock(EventRequest.class);
-        org.springframework.web.multipart.MultipartFile file = mock(org.springframework.web.multipart.MultipartFile.class);
+        org.springframework.web.multipart.MultipartFile file = mock(
+                org.springframework.web.multipart.MultipartFile.class);
 
         when(request.getImage()).thenReturn(file);
         when(file.isEmpty()).thenReturn(false);
@@ -105,7 +124,9 @@ class EventServiceTest {
         when(request.getContent()).thenReturn("Content");
         when(request.getStartEvent()).thenReturn(new Date());
         when(request.getEndEvent()).thenReturn(new Date(System.currentTimeMillis() + 86400000));
+        when(request.getOrmawaId()).thenReturn(ormawaId);
 
+        when(ormawaRepository.findById(ormawaId)).thenReturn(Optional.of(ormawaEntity));
         when(uploadService.saveFiles(anyString(), any())).thenReturn(List.of("image.jpg"));
         when(eventRepository.save(any(EventEntity.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -127,35 +148,14 @@ class EventServiceTest {
         when(request.getEventName()).thenReturn("Seminar Hilmi");
         when(request.getDescription()).thenReturn("Hilmi Ngajar NextJS");
         when(request.getContent()).thenReturn("Hilmi Jago");
-        when(request.getEventType()).thenReturn(EventType.SEMINAR);
         when(request.getStartEvent()).thenReturn(new Date());
         when(request.getEndEvent()).thenReturn(new Date(System.currentTimeMillis() + 86400000));
         when(request.getEventRegion()).thenReturn(EventRegion.Regional);
+        when(request.getOrmawaId()).thenReturn(ormawaId);
+
+        when(ormawaRepository.findById(ormawaId)).thenReturn(Optional.of(ormawaEntity));
 
         EventResponse response = eventService.updateEvent(id, request);
-
-        assertNotNull(response);
-        verify(eventRepository).save(any(EventEntity.class));
-    }
-
-    @Test
-    void givenValidIdAndRequest_whenPatchEvent_thenPatchesAndReturnsEventResponse() {
-        UUID id = UUID.randomUUID();
-        EventSeminar event = createSampleEvent();
-        when(eventRepository.findById(id)).thenReturn(Optional.of(event));
-        when(eventRepository.save(any(EventEntity.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        EventRequest request = mock(EventRequest.class);
-        when(request.getEventName()).thenReturn("Patched Name");
-        when(request.getDescription()).thenReturn("Patched Desc");
-        when(request.getContent()).thenReturn("Patched Content");
-        when(request.getEventType()).thenReturn(EventType.SEMINAR);
-        when(request.getStartEvent()).thenReturn(new Date());
-        when(request.getEndEvent()).thenReturn(new Date(System.currentTimeMillis() + 86400000));
-        when(request.getEventRegion()).thenReturn(EventRegion.International);
-        when(request.getImage()).thenReturn(null);
-
-        EventResponse response = eventService.patchEvent(id, request);
 
         assertNotNull(response);
         verify(eventRepository).save(any(EventEntity.class));

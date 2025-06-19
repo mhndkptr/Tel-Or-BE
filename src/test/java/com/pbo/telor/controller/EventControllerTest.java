@@ -63,7 +63,7 @@ class EventControllerTest {
         EventResponse response = createSampleResponse();
         Page<EventResponse> page = new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1);
 
-        Mockito.when(eventService.findAllFiltered(anyInt(), anyInt(), any(), any(), any(), any()))
+        Mockito.when(eventService.findAllFiltered(anyInt(), anyInt(), any(), any(), any(), any(), any()))
                 .thenReturn(page);
 
         mockMvc.perform(get("/api/v1/events")

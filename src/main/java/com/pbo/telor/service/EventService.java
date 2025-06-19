@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.pbo.telor.dto.request.EventRequest;
 import com.pbo.telor.dto.response.EventResponse;
 import com.pbo.telor.enums.EventType;
+import com.pbo.telor.exception.BadRequestException;
 import com.pbo.telor.mapper.EventMapper;
 import com.pbo.telor.model.EventBeasiswa;
 import com.pbo.telor.model.EventCompanyVisit;
@@ -24,7 +24,8 @@ import com.pbo.telor.model.EventLomba;
 import com.pbo.telor.model.EventOpenRecruitment;
 import com.pbo.telor.model.EventSeminar;
 import com.pbo.telor.repository.EventRepository;
-import com.pbo.telor.exception.BadRequestException;
+import com.pbo.telor.model.OrmawaEntity;
+import com.pbo.telor.repository.OrmawaRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final OrmawaRepository ormawaRepository;
     private final UploadService uploadService;
 
     public Page<EventResponse> findAllPaged(int page, int size) {
@@ -52,6 +54,13 @@ public class EventService {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("Image file is required when creating an event");
         }
+
+        if (request.getOrmawaId() == null) {
+            throw new IllegalArgumentException("OrmawaId is required");
+        }
+
+        OrmawaEntity ormawa = ormawaRepository.findById(request.getOrmawaId())
+                .orElseThrow(() -> new IllegalArgumentException("Ormawa not found"));
 
         EventType type = request.getEventType();
 
@@ -83,7 +92,6 @@ public class EventService {
             case BEASISWA -> {
                 EventBeasiswa beasiswa = new EventBeasiswa();
                 beasiswa.setEventRegion(request.getEventRegion());
-                ;
                 beasiswa.setPrize(request.getPrize());
                 entity = beasiswa;
             }
@@ -99,6 +107,7 @@ public class EventService {
         entity.setEventType(type);
         entity.setStartEvent(request.getStartEvent());
         entity.setEndEvent(request.getEndEvent());
+        entity.setOrmawa(ormawa);
 
         EventEntity saved = eventRepository.save(entity);
         return EventMapper.toResponse(saved);
@@ -110,6 +119,12 @@ public class EventService {
 
         if (request.getEventType() != null) {
             throw new BadRequestException("EventType is not allowed for updating an event");
+        }
+
+        if (request.getOrmawaId() != null) {
+            OrmawaEntity ormawa = ormawaRepository.findById(request.getOrmawaId())
+                    .orElseThrow(() -> new IllegalArgumentException("Ormawa not found"));
+            entity.setOrmawa(ormawa);
         }
 
         // Update image jika ada
@@ -153,51 +168,6 @@ public class EventService {
         return EventMapper.toResponse(updated);
     }
 
-    public EventResponse patchEvent(UUID id, EventRequest request) {
-        EventEntity entity = eventRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Event not found"));
-
-        if (request.getEventType() != null) {
-            throw new BadRequestException("EventType is not allowed for updating an event");
-        }
-
-        // Update field sesuai request (seperti jawaban sebelumnya)
-        if (request.getEventName() != null)
-            entity.setEventName(request.getEventName());
-        if (request.getDescription() != null)
-            entity.setDescription(request.getDescription());
-        if (request.getContent() != null)
-            entity.setContent(request.getContent());
-        if (request.getStartEvent() != null)
-            entity.setStartEvent(request.getStartEvent());
-        if (request.getEndEvent() != null)
-            entity.setEndEvent(request.getEndEvent());
-
-        if (entity instanceof EventLomba lomba) {
-            if (request.getPrize() != null)
-                lomba.setPrize(request.getPrize());
-            if (request.getEventRegion() != null)
-                lomba.setEventRegion(request.getEventRegion());
-        } else if (entity instanceof EventBeasiswa beasiswa) {
-            if (request.getPrize() != null)
-                beasiswa.setPrize(request.getPrize());
-            if (request.getEventRegion() != null)
-                beasiswa.setEventRegion(request.getEventRegion());
-        } else if (entity instanceof EventSeminar seminar) {
-            if (request.getEventRegion() != null)
-                seminar.setEventRegion(request.getEventRegion());
-        }
-
-        MultipartFile file = request.getImage();
-        if (file != null && !file.isEmpty()) {
-            String imageUrl = uploadService.saveFiles("event", new MultipartFile[] { file }).get(0);
-            entity.setImage(new ArrayList<>(List.of(imageUrl)));
-        }
-
-        EventEntity patched = eventRepository.save(entity);
-        return EventMapper.toResponse(patched);
-    }
-
     public void deleteEvent(UUID id) {
         if (!eventRepository.existsById(id)) {
             throw new NoSuchElementException("Event not found with ID");
@@ -206,11 +176,13 @@ public class EventService {
     }
 
     public Page<EventResponse> findAllFiltered(
-            int page, int size,
+            int page,
+            int size,
             String keyword,
             EventType type,
             Date startDate,
-            Date endDate) {
+            Date endDate,
+            UUID ormawaId) {
         Specification<EventEntity> spec = Specification.where(null);
 
         if (keyword != null && !keyword.isEmpty()) {
@@ -224,6 +196,9 @@ public class EventService {
             spec = spec.and((root, query, cb) -> cb.and(
                     cb.greaterThanOrEqualTo(root.get("startEvent"), startDate),
                     cb.lessThanOrEqualTo(root.get("endEvent"), endDate)));
+        }
+        if (ormawaId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("ormawa").get("id"), ormawaId));
         }
 
         return eventRepository.findAll(spec, PageRequest.of(page, size))
