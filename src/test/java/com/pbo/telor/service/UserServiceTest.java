@@ -40,10 +40,9 @@ class UserServiceTest {
                 .password("password123")
                 .role(Role.ADMIN)
                 .build();
-        UserResponse response = new UserResponse(id, "John Doe", "john@example.com", Role.ADMIN);
+        UserResponse response = new UserResponse(id, "John Doe", "john@example.com", Role.ADMIN, null);
 
         when(userRepository.findById(id)).thenReturn(Optional.of(entity));
-        // UserMapper.toResponse is static, so we don't mock it, just compare result
 
         UserResponse result = userService.findById(id);
 
@@ -79,7 +78,8 @@ class UserServiceTest {
                 savedEntity.getId(),
                 "John Doe",
                 "john@example.com",
-                Role.ADMIN);
+                Role.ADMIN,
+                null);
 
         when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
         when(userRepository.save(any(UserEntity.class))).thenReturn(savedEntity);
@@ -111,7 +111,7 @@ class UserServiceTest {
                 .email("new@example.com")
                 .role(Role.ADMIN)
                 .build();
-        UserResponse response = new UserResponse(id, "New Name", "new@example.com", Role.ADMIN);
+        UserResponse response = new UserResponse(id, "New Name", "new@example.com", Role.ADMIN, null);
 
         when(userRepository.findById(id)).thenReturn(Optional.of(existing));
         when(userRepository.save(existing)).thenReturn(saved);
@@ -151,7 +151,7 @@ class UserServiceTest {
                 .email("old@example.com")
                 .role(Role.ORGANIZER)
                 .build();
-        UserResponse response = new UserResponse(id, "Patched Name", "old@example.com", Role.ORGANIZER);
+        UserResponse response = new UserResponse(id, "Patched Name", "old@example.com", Role.ORGANIZER, null);
 
         when(userRepository.findById(id)).thenReturn(Optional.of(existing));
         when(userRepository.save(existing)).thenReturn(saved);

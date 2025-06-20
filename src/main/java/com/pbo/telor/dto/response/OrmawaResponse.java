@@ -2,6 +2,7 @@ package com.pbo.telor.dto.response;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pbo.telor.enums.LabType;
 import com.pbo.telor.enums.OrmawaCategory;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrmawaResponse {
     private UUID id;
     @Column(name = "name")

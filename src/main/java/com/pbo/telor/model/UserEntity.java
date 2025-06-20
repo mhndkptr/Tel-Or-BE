@@ -47,8 +47,7 @@ public class UserEntity {
         ORGANIZER
     }
 
-    @OneToOne()
+    @OneToOne
     @JoinColumn(name = "ormawa_id", unique = true)
-    @JsonBackReference
     private OrmawaEntity ormawa;
 }

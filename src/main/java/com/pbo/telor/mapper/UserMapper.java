@@ -9,6 +9,19 @@ public class UserMapper {
                 user.getId(),
                 user.getFullname(),
                 user.getEmail(),
-                user.getRole());
+                user.getRole(),
+                user.getOrmawa() != null
+                        ? OrmawaMapper.toResponseWithoutUser(user.getOrmawa())
+                        : null);
     }
+
+    public static UserResponse toResponseWithoutOrmawa(UserEntity user) {
+        return new UserResponse(
+                user.getId(),
+                user.getFullname(),
+                user.getEmail(),
+                user.getRole(),
+                null);
+    }
+
 }
