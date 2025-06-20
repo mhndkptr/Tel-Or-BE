@@ -3,6 +3,7 @@ package com.pbo.telor.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pbo.telor.dto.request.UserRequest;
 import com.pbo.telor.dto.response.UserResponse;
+import com.pbo.telor.dto.response.OrmawaResponse;
 import com.pbo.telor.model.UserEntity;
 import com.pbo.telor.model.UserEntity.Role;
 import com.pbo.telor.service.UserService;
@@ -48,7 +49,7 @@ class UserControllerTest {
         @Test
         void shouldReturnUserResponse_whenGetById() throws Exception {
                 UUID id = UUID.randomUUID();
-                UserResponse response = new UserResponse(id, "John Doe", "john@example.com", Role.ADMIN);
+                UserResponse response = new UserResponse(id, "John Doe", "john@example.com", Role.ADMIN, null);
 
                 Mockito.when(userService.findById(id)).thenReturn(response);
 
@@ -67,7 +68,8 @@ class UserControllerTest {
                                 .role(Role.ADMIN)
                                 .build();
 
-                UserResponse response = new UserResponse(UUID.randomUUID(), "John Doe", "john@example.com", Role.ADMIN);
+                UserResponse response = new UserResponse(UUID.randomUUID(), "John Doe", "john@example.com", Role.ADMIN,
+                                null);
 
                 Mockito.when(userService.create(any(UserRequest.class))).thenReturn(response);
 
@@ -82,7 +84,7 @@ class UserControllerTest {
         @Test
         void shouldReturnPagedUsers_whenGetUsersPaged() throws Exception {
                 List<UserResponse> userList = List.of(
-                                new UserResponse(UUID.randomUUID(), "John Doe", "john@example.com", Role.ADMIN));
+                                new UserResponse(UUID.randomUUID(), "John Doe", "john@example.com", Role.ADMIN, null));
                 Page<UserResponse> userPage = new PageImpl<>(userList, PageRequest.of(0, 10), 1);
 
                 Mockito.when(userService.findAllPaged(anyInt(), anyInt())).thenReturn(userPage);
@@ -101,7 +103,7 @@ class UserControllerTest {
                                 .role(Role.ORGANIZER)
                                 .build();
 
-                UserResponse response = new UserResponse(id, "Jane Doe", "jane@example.com", Role.ORGANIZER);
+                UserResponse response = new UserResponse(id, "Jane Doe", "jane@example.com", Role.ORGANIZER, null);
 
                 Mockito.when(userService.update(eq(id), any(UserEntity.class))).thenReturn(response);
 
@@ -120,7 +122,7 @@ class UserControllerTest {
                                 .fullname("Patched Name")
                                 .build();
 
-                UserResponse response = new UserResponse(id, "Patched Name", "john@example.com", Role.ADMIN);
+                UserResponse response = new UserResponse(id, "Patched Name", "john@example.com", Role.ADMIN, null);
 
                 Mockito.when(userService.patchUser(eq(id), any(UserEntity.class))).thenReturn(response);
 

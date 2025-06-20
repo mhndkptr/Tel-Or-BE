@@ -1,286 +1,193 @@
 package com.pbo.telor.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.pbo.telor.dto.request.UserRequest;
+import com.pbo.telor.dto.response.UserResponse;
+import com.pbo.telor.model.UserEntity;
+import com.pbo.telor.model.UserEntity.Role;
+import com.pbo.telor.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.web.multipart.MultipartFile;
+import org.mockito.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.pbo.telor.dto.request.OrmawaRequest;
-import com.pbo.telor.dto.response.OrmawaResponse;
-import com.pbo.telor.enums.LabType;
-import com.pbo.telor.enums.OrmawaCategory;
-import com.pbo.telor.exception.NotFoundException;
-import com.pbo.telor.mapper.OrmawaMapper;
-import com.pbo.telor.model.OrmawaCommunityEntity;
-import com.pbo.telor.model.OrmawaEntity;
-import com.pbo.telor.model.UserEntity;
-import com.pbo.telor.repository.OrmawaRepository;
-import com.pbo.telor.repository.UserRepository;
+import java.util.*;
 
-class OrmawaServiceTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-    @InjectMocks
-    private OrmawaService ormawaService;
-
-    @Mock
-    private OrmawaRepository ormawaRepository;
-
-    @Mock
-    private UploadService uploadService;
-
-    @Mock
-    private OrmawaMapper ormawaMapper;
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @InjectMocks
+    private UserService userService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
-    private OrmawaEntity createSampleOrmawa() {
-        OrmawaEntity entity = mock(OrmawaEntity.class);
+    @Test
+    void shouldReturnUserResponse_whenFindByIdAndDataExists() {
         UUID id = UUID.randomUUID();
-        when(entity.getId()).thenReturn(id);
-        when(entity.getOrmawaName()).thenReturn("Sample Ormawa");
-        when(entity.getDescription()).thenReturn("Sample Description");
-        when(entity.getContent()).thenReturn("Sample Content");
-        when(entity.getIsOpenRegistration()).thenReturn(true);
-        when(entity.getIcon()).thenReturn("icon.png");
-        when(entity.getBackground()).thenReturn("bg.png");
-        when(entity.getCategory()).thenReturn(OrmawaCategory.COMMUNITY);
-        return entity;
+        UserEntity entity = UserEntity.builder()
+                .id(id)
+                .fullname("John Doe")
+                .email("john@example.com")
+                .password("password123")
+                .role(Role.ADMIN)
+                .build();
+        UserResponse response = new UserResponse(id, "John Doe", "john@example.com", Role.ADMIN, null);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(entity));
+
+        UserResponse result = userService.findById(id);
+
+        assertEquals(response, result);
+        verify(userRepository).findById(id);
     }
 
     @Test
-    void findAll_shouldReturnListOfResponses() {
-        OrmawaEntity entity = createSampleOrmawa();
-        when(ormawaRepository.findAll()).thenReturn(List.of(entity));
-        OrmawaResponse response = mock(OrmawaResponse.class);
-
-        try (var mocked = mockStatic(OrmawaMapper.class)) {
-            mocked.when(() -> OrmawaMapper.toResponse(entity)).thenReturn(response);
-
-            List<OrmawaResponse> result = ormawaService.findAll();
-
-            assertEquals(1, result.size());
-            verify(ormawaRepository).findAll();
-        }
-    }
-
-    @Test
-    void findAllPaged_shouldReturnPagedResponses() {
-        OrmawaEntity entity = createSampleOrmawa();
-        Page<OrmawaEntity> page = new PageImpl<>(List.of(entity));
-        when(ormawaRepository.findAll(any(PageRequest.class))).thenReturn(page);
-        OrmawaResponse response = mock(OrmawaResponse.class);
-
-        try (var mocked = mockStatic(OrmawaMapper.class)) {
-            mocked.when(() -> OrmawaMapper.toResponse(entity)).thenReturn(response);
-
-            Page<OrmawaResponse> result = ormawaService.findAllPaged(0, 10);
-
-            assertEquals(1, result.getTotalElements());
-            verify(ormawaRepository).findAll(any(PageRequest.class));
-        }
-    }
-
-    @Test
-    void getOrmawaById_shouldReturnResponse_whenFound() {
-        OrmawaEntity entity = createSampleOrmawa();
-        UUID id = entity.getId();
-        when(ormawaRepository.findById(id)).thenReturn(Optional.of(entity));
-        OrmawaResponse response = mock(OrmawaResponse.class);
-
-        try (var mocked = mockStatic(OrmawaMapper.class)) {
-            mocked.when(() -> OrmawaMapper.toResponse(entity)).thenReturn(response);
-
-            OrmawaResponse result = ormawaService.getOrmawaById(id);
-
-            assertNotNull(result);
-            verify(ormawaRepository).findById(id);
-        }
-    }
-
-    @Test
-    void getOrmawaById_shouldThrowNotFound_whenNotFound() {
+    void shouldThrowNotFoundException_whenFindByIdAndDataNotExists() {
         UUID id = UUID.randomUUID();
-        when(ormawaRepository.findById(id)).thenReturn(Optional.empty());
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> ormawaService.getOrmawaById(id));
-        verify(ormawaRepository).findById(id);
+        assertThrows(com.pbo.telor.exception.NotFoundException.class, () -> userService.findById(id));
     }
 
     @Test
-    void createOrmawa_shouldSaveAndReturnResponse_forCommunity() {
-        OrmawaRequest request = mock(OrmawaRequest.class);
-        when(request.getCategory()).thenReturn(OrmawaCategory.COMMUNITY);
-        when(request.getOrmawaName()).thenReturn("Central Computer Improvement");
-        when(request.getDescription()).thenReturn("desc");
-        when(request.getContent()).thenReturn("content");
-        when(request.getIsOpenRegistration()).thenReturn(true);
-        MultipartFile iconFile = mock(MultipartFile.class);
-        MultipartFile bgFile = mock(MultipartFile.class);
-        when(request.getIcon()).thenReturn(iconFile);
-        when(request.getBackground()).thenReturn(bgFile);
+    void shouldSaveUserAndReturnResponse_whenCreateCalled() {
+        UserRequest request = new UserRequest(
+                "John Doe",
+                "john@example.com",
+                "password123",
+                Role.ADMIN);
 
-        UUID userId = UUID.randomUUID();
-        when(request.getUserId()).thenReturn(userId);
-        UserEntity user = mock(UserEntity.class);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        UserEntity savedEntity = UserEntity.builder()
+                .id(UUID.randomUUID())
+                .fullname("John Doe")
+                .email("john@example.com")
+                .password("encodedPassword")
+                .role(Role.ADMIN)
+                .build();
 
-        when(uploadService.saveFile(anyString(), any(MultipartFile.class))).thenReturn("some-url");
-        OrmawaEntity savedEntity = createSampleOrmawa();
-        when(ormawaMapper.fillEntityFromRequest(any(), anyString(), anyString()))
-                .thenReturn(new OrmawaCommunityEntity());
-        when(ormawaRepository.save(any(OrmawaEntity.class))).thenReturn(savedEntity);
-        OrmawaResponse response = mock(OrmawaResponse.class);
+        UserResponse expectedResponse = new UserResponse(
+                savedEntity.getId(),
+                "John Doe",
+                "john@example.com",
+                Role.ADMIN,
+                null);
 
-        try (var mocked = mockStatic(OrmawaMapper.class)) {
-            mocked.when(() -> OrmawaMapper.toResponse(savedEntity)).thenReturn(response);
+        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
+        when(userRepository.save(any(UserEntity.class))).thenReturn(savedEntity);
 
-            OrmawaResponse result = ormawaService.createOrmawa(request);
+        UserResponse result = userService.create(request);
 
-            assertNotNull(result);
-            verify(ormawaRepository).save(any(OrmawaEntity.class));
-        }
+        assertEquals(expectedResponse, result);
+        verify(passwordEncoder).encode("password123");
+        verify(userRepository).save(any(UserEntity.class));
     }
 
     @Test
-    void createOrmawa_shouldSaveAndReturnResponse_forLab() {
-        OrmawaRequest request = mock(OrmawaRequest.class);
-        when(request.getCategory()).thenReturn(OrmawaCategory.LAB);
-        when(request.getLabType()).thenReturn(LabType.PRAKTIKUM);
-        when(request.getOrmawaName()).thenReturn("Informatics Lab");
-        when(request.getDescription()).thenReturn("desc");
-        when(request.getContent()).thenReturn("content");
-        when(request.getIsOpenRegistration()).thenReturn(true);
-
-        MultipartFile iconFile = mock(MultipartFile.class);
-        MultipartFile bgFile = mock(MultipartFile.class);
-        when(request.getIcon()).thenReturn(iconFile);
-        when(request.getBackground()).thenReturn(bgFile);
-
-        UUID userId = UUID.randomUUID();
-        when(request.getUserId()).thenReturn(userId);
-        UserEntity user = mock(UserEntity.class);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-
-        when(uploadService.saveFile(anyString(), any(MultipartFile.class))).thenReturn("some-url");
-        OrmawaEntity savedEntity = createSampleOrmawa();
-        when(ormawaMapper.fillEntityFromRequest(any(), anyString(), anyString()))
-                .thenReturn(new OrmawaCommunityEntity());
-        when(ormawaRepository.save(any(OrmawaEntity.class))).thenReturn(savedEntity);
-        OrmawaResponse response = mock(OrmawaResponse.class);
-
-        try (var mocked = mockStatic(OrmawaMapper.class)) {
-            mocked.when(() -> OrmawaMapper.toResponse(savedEntity)).thenReturn(response);
-
-            OrmawaResponse result = ormawaService.createOrmawa(request);
-
-            assertNotNull(result);
-            verify(ormawaRepository).save(any(OrmawaEntity.class));
-        }
-    }
-
-    @Test
-    void updateOrmawa_shouldUpdateAndReturnResponse_whenFound() {
-        OrmawaEntity entity = createSampleOrmawa();
-        UUID id = entity.getId();
-        OrmawaRequest request = mock(OrmawaRequest.class);
-        when(ormawaRepository.findById(id)).thenReturn(Optional.of(entity));
-        when(ormawaRepository.save(entity)).thenReturn(entity);
-        OrmawaResponse response = mock(OrmawaResponse.class);
-
-        try (var mocked = mockStatic(OrmawaMapper.class)) {
-            mocked.when(() -> OrmawaMapper.updateEntityFromRequest(entity, request, "icon.png", "background.png"))
-                    .thenCallRealMethod();
-            mocked.when(() -> OrmawaMapper.toResponse(entity)).thenReturn(response);
-
-            OrmawaResponse result = ormawaService.updateOrmawa(id, request);
-
-            assertNotNull(result);
-            verify(ormawaRepository).save(entity);
-        }
-    }
-
-    @Test
-    void updateOrmawa_shouldThrowNotFound_whenNotFound() {
+    void shouldUpdateUser_whenUpdateCalledAndUserExists() {
         UUID id = UUID.randomUUID();
-        OrmawaRequest request = mock(OrmawaRequest.class);
-        when(ormawaRepository.findById(id)).thenReturn(Optional.empty());
+        UserEntity existing = UserEntity.builder()
+                .id(id)
+                .fullname("Old Name")
+                .email("old@example.com")
+                .role(Role.ORGANIZER)
+                .build();
+        UserEntity updateData = UserEntity.builder()
+                .fullname("New Name")
+                .email("new@example.com")
+                .role(Role.ADMIN)
+                .build();
+        UserEntity saved = UserEntity.builder()
+                .id(id)
+                .fullname("New Name")
+                .email("new@example.com")
+                .role(Role.ADMIN)
+                .build();
+        UserResponse response = new UserResponse(id, "New Name", "new@example.com", Role.ADMIN, null);
 
-        assertThrows(NotFoundException.class, () -> ormawaService.updateOrmawa(id, request));
-        verify(ormawaRepository, never()).save(any());
+        when(userRepository.findById(id)).thenReturn(Optional.of(existing));
+        when(userRepository.save(existing)).thenReturn(saved);
+
+        UserResponse result = userService.update(id, updateData);
+
+        assertEquals(response, result);
+        verify(userRepository).findById(id);
+        verify(userRepository).save(existing);
     }
 
     @Test
-    void patchOrmawa_shouldPatchAndReturnResponse_whenFound() {
-        OrmawaEntity entity = createSampleOrmawa();
-        UUID id = entity.getId();
-        OrmawaRequest request = mock(OrmawaRequest.class);
-        when(ormawaRepository.findById(id)).thenReturn(Optional.of(entity));
-        when(ormawaRepository.save(entity)).thenReturn(entity);
-        OrmawaResponse response = mock(OrmawaResponse.class);
-
-        try (var mocked = mockStatic(OrmawaMapper.class)) {
-            mocked.when(() -> OrmawaMapper.toResponse(entity)).thenReturn(response);
-
-            OrmawaResponse result = ormawaService.patchOrmawa(id, request);
-
-            assertNotNull(result);
-            verify(ormawaRepository).save(entity);
-        }
-    }
-
-    @Test
-    void patchOrmawa_shouldThrowNotFound_whenNotFound() {
+    void shouldThrowNoSuchElementException_whenUpdateUserNotFound() {
         UUID id = UUID.randomUUID();
-        OrmawaRequest request = mock(OrmawaRequest.class);
-        when(ormawaRepository.findById(id)).thenReturn(Optional.empty());
+        UserEntity updateData = UserEntity.builder().fullname("X").email("Y").role(Role.ORGANIZER).build();
 
-        assertThrows(NotFoundException.class, () -> ormawaService.patchOrmawa(id, request));
-        verify(ormawaRepository, never()).save(any());
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> userService.update(id, updateData));
     }
 
     @Test
-    void deleteOrmawa_shouldDelete_whenExists() {
+    void shouldPatchUser_whenPatchUserCalledAndUserExists() {
         UUID id = UUID.randomUUID();
-        when(ormawaRepository.existsById(id)).thenReturn(true);
+        UserEntity existing = UserEntity.builder()
+                .id(id)
+                .fullname("Old Name")
+                .email("old@example.com")
+                .role(Role.ORGANIZER)
+                .build();
+        UserEntity patchData = UserEntity.builder()
+                .fullname("Patched Name")
+                .build();
+        UserEntity saved = UserEntity.builder()
+                .id(id)
+                .fullname("Patched Name")
+                .email("old@example.com")
+                .role(Role.ORGANIZER)
+                .build();
+        UserResponse response = new UserResponse(id, "Patched Name", "old@example.com", Role.ORGANIZER, null);
 
-        ormawaService.deleteOrmawa(id);
+        when(userRepository.findById(id)).thenReturn(Optional.of(existing));
+        when(userRepository.save(existing)).thenReturn(saved);
 
-        verify(ormawaRepository).deleteById(id);
+        UserResponse result = userService.patchUser(id, patchData);
+
+        assertEquals(response, result);
+        verify(userRepository).findById(id);
+        verify(userRepository).save(existing);
     }
 
     @Test
-    void deleteOrmawa_shouldThrowNotFound_whenNotExists() {
+    void shouldThrowNotFoundException_whenPatchUserNotFound() {
         UUID id = UUID.randomUUID();
-        when(ormawaRepository.existsById(id)).thenReturn(false);
+        UserEntity patchData = UserEntity.builder().fullname("X").build();
 
-        assertThrows(NotFoundException.class, () -> ormawaService.deleteOrmawa(id));
-        verify(ormawaRepository, never()).deleteById(id);
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(com.pbo.telor.exception.NotFoundException.class, () -> userService.patchUser(id, patchData));
+    }
+
+    @Test
+    void shouldDeleteUser_whenDataExists() {
+        UUID id = UUID.randomUUID();
+        when(userRepository.existsById(id)).thenReturn(true);
+
+        userService.delete(id);
+
+        verify(userRepository).deleteById(id);
+    }
+
+    @Test
+    void shouldThrowNoSuchElementException_whenDeleteAndDataNotExists() {
+        UUID id = UUID.randomUUID();
+        when(userRepository.existsById(id)).thenReturn(false);
+
+        assertThrows(NoSuchElementException.class, () -> userService.delete(id));
     }
 }

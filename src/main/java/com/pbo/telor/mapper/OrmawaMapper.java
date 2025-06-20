@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.pbo.telor.dto.request.OrmawaRequest;
 import com.pbo.telor.dto.response.OrmawaResponse;
+import com.pbo.telor.dto.response.UserResponse;
 import com.pbo.telor.model.OrmawaCommunityEntity;
 import com.pbo.telor.model.OrmawaEntity;
 import com.pbo.telor.model.OrmawaLaboratoryEntity;
@@ -58,28 +59,32 @@ public class OrmawaMapper {
 
     // === ENTITY → RESPONSE ===
     public static OrmawaResponse toResponse(OrmawaEntity entity) {
-        OrmawaResponse.OrmawaResponseBuilder builder = OrmawaResponse.builder()
+        return toResponseInternal(entity, true);
+    }
+
+    public static OrmawaResponse toResponseWithoutUser(OrmawaEntity entity) {
+        return toResponseInternal(entity, false);
+    }
+
+    private static OrmawaResponse toResponseInternal(OrmawaEntity entity, boolean includeUser) {
+        return OrmawaResponse.builder()
                 .id(entity.getId())
                 .ormawaName(entity.getOrmawaName())
                 .description(entity.getDescription())
                 .content(entity.getContent())
                 .isOpenRegistration(entity.getIsOpenRegistration())
                 .icon(entity.getIcon())
-                .user(UserMapper.toResponse(entity.getUser()))
                 .background(entity.getBackground())
                 .category(entity.getCategory())
-                .events(entity.getEvents() == null ? List.of()
-                        : entity.getEvents().stream().map(EventMapper::toResponse).toList());
-
-        if (entity instanceof OrmawaLaboratoryEntity lab) {
-            builder.labType(lab.getLabType());
-        }
-
-        if (entity instanceof OrmawaUKMEntity ukm) {
-            builder.ukmCategory(ukm.getUkmCategory());
-        }
-
-        return builder.build();
+                .labType(entity instanceof com.pbo.telor.model.OrmawaLaboratoryEntity lab ? lab.getLabType() : null)
+                .ukmCategory(entity instanceof com.pbo.telor.model.OrmawaUKMEntity ukm ? ukm.getUkmCategory() : null)
+                .events(entity.getEvents() != null
+                        ? entity.getEvents().stream().map(EventMapper::toResponse).toList()
+                        : java.util.List.of())
+                .user(includeUser && entity.getUser() != null
+                        ? UserMapper.toResponseWithoutOrmawa(entity.getUser())
+                        : null)
+                .build();
     }
 
     // === REQUEST → EXISTING ENTITY (Update) ===

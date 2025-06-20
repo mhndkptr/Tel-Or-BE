@@ -75,9 +75,7 @@ public abstract class OrmawaEntity {
     @JsonManagedReference
     private List<EventEntity> events;
 
-    @OneToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    @JsonManagedReference
+    @OneToOne(mappedBy = "ormawa")
     private UserEntity user;
 
 }

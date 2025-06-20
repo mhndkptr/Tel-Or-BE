@@ -56,11 +56,16 @@ public class OrmawaService {
 
         OrmawaEntity entity = ormawaMapper.fillEntityFromRequest(request, iconUrl, bgUrl);
         UserEntity user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found with ID: " + request.getUserId()));
 
-        entity.setUser(user);
-        OrmawaEntity saved = ormawaRepository.save(entity);
-        return ormawaMapper.toResponse(saved);
+        OrmawaEntity savedOrmawa = ormawaRepository.save(entity);
+
+        user.setOrmawa(savedOrmawa);
+        savedOrmawa.setUser(user);
+
+        userRepository.save(user);
+
+        return ormawaMapper.toResponse(savedOrmawa);
     }
 
     public OrmawaResponse updateOrmawa(UUID id, OrmawaRequest request) {
