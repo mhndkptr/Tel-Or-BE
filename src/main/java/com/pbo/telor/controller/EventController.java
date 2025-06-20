@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -47,9 +48,9 @@ public class EventController {
             @RequestParam(value = "type", required = false) EventType type,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
             @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
-            @RequestParam(value = "ormawaId", required = false) UUID ormawaId
-    ) {
-        Page<EventResponse> events = eventService.findAllFiltered(page, limit, keyword, type, startDate, endDate, ormawaId);
+            @RequestParam(value = "ormawaId", required = false) UUID ormawaId) {
+        Page<EventResponse> events = eventService.findAllFiltered(page, limit, keyword, type, startDate, endDate,
+                ormawaId);
 
         return ResponseUtil.paged(
                 events.getContent(),
@@ -59,8 +60,7 @@ public class EventController {
                         .totalItem(events.getTotalElements())
                         .limit(events.getSize())
                         .build(),
-                "Paged Events fetched successfully"
-        );
+                "Paged Events fetched successfully");
     }
 
     @GetMapping("/{id}")
@@ -69,24 +69,26 @@ public class EventController {
         return ResponseUtil.ok(event, "Successfully retrieved event");
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<BaseResponse<EventResponse>> createEvent(
             @ModelAttribute @Valid EventRequest request) {
-        
+
         EventResponse event = eventService.createEvent(request);
         return ResponseUtil.ok(event, "Successfully created event");
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<BaseResponse<EventResponse>> updateEvent(
             @PathVariable UUID id,
             @ModelAttribute @Valid EventRequest request) {
-        
+
         EventResponse event = eventService.updateEvent(id, request);
         return ResponseUtil.ok(event, "Successfully updated event");
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<Object>> deleteEvent(@PathVariable UUID id) {
         eventService.deleteEvent(id);
