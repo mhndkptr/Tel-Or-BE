@@ -9,6 +9,7 @@ import com.pbo.telor.utils.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,6 +67,7 @@ public class FaqController {
         }
 
         @Operation(summary = "Create a new FAQ")
+        @PreAuthorize("hasRole('ADMIN')")
         @ApiResponses({
                         @ApiResponse(responseCode = "201", description = "Successfully created FAQ"),
                         @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content()),
@@ -78,6 +80,7 @@ public class FaqController {
         }
 
         @Operation(summary = "Update an existing FAQ")
+        @PreAuthorize("hasRole('ADMIN')")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Successfully updated FAQ"),
                         @ApiResponse(responseCode = "404", description = "FAQ not found", content = @Content()),
@@ -93,6 +96,7 @@ public class FaqController {
         }
 
         @Operation(summary = "Delete an FAQ Data")
+        @PreAuthorize("hasRole('ADMIN')")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Successfully deleted FAQ"),
                         @ApiResponse(responseCode = "404", description = "FAQ not found", content = @Content()),

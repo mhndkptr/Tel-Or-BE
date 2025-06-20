@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,12 +67,14 @@ public class OrmawaController {
         return ResponseUtil.ok(data.getEvents(), "Successfully retrieved Ormawa Events");
     }
 
+    @PreAuthorize("hasRole('ORGANIZER')")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<BaseResponse<OrmawaResponse>> createOrmawa(@ModelAttribute OrmawaRequest request) {
         OrmawaResponse data = ormawaService.createOrmawa(request);
         return ResponseUtil.ok(data, "Successfully created Ormawa");
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<BaseResponse<OrmawaResponse>> updateOrmawa(
             @PathVariable UUID id,
@@ -80,6 +83,7 @@ public class OrmawaController {
         return ResponseUtil.ok(data, "Successfully updated Ormawa");
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     @PatchMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<BaseResponse<OrmawaResponse>> patchOrmawa(
             @PathVariable UUID id,
@@ -88,6 +92,7 @@ public class OrmawaController {
         return ResponseUtil.ok(data, "Successfully patched Ormawa");
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<Object>> deleteOrmawa(@PathVariable UUID id) {
         ormawaService.deleteOrmawa(id);

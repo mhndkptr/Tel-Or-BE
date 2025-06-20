@@ -268,7 +268,9 @@ class OrmawaServiceTest {
     @Test
     void deleteOrmawa_shouldDelete_whenExists() {
         UUID id = UUID.randomUUID();
-        when(ormawaRepository.existsById(id)).thenReturn(true);
+        OrmawaEntity entity = mock(OrmawaEntity.class);
+        when(ormawaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(entity.getUser()).thenReturn(null);
 
         ormawaService.deleteOrmawa(id);
 
