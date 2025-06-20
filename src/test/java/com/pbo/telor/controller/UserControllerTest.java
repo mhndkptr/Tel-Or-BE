@@ -3,7 +3,6 @@ package com.pbo.telor.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pbo.telor.dto.request.UserRequest;
 import com.pbo.telor.dto.response.UserResponse;
-import com.pbo.telor.dto.response.OrmawaResponse;
 import com.pbo.telor.model.UserEntity;
 import com.pbo.telor.model.UserEntity.Role;
 import com.pbo.telor.service.UserService;
