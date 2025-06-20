@@ -117,8 +117,15 @@ public class OrmawaService {
     }
 
     public void deleteOrmawa(UUID id) {
-        if (!ormawaRepository.existsById(id)) {
-            throw new NotFoundException("Ormawa not found with ID: " + id);
+        OrmawaEntity ormawa = ormawaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Ormawa not found with ID: " + id));
+
+        // Putus relasi dari User
+        if (ormawa.getUser() != null) {
+            UserEntity user = ormawa.getUser();
+            user.setOrmawa(null);
+            // save user supaya FK null
+            userRepository.save(user);
         }
         ormawaRepository.deleteById(id);
     }
