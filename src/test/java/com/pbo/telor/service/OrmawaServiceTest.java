@@ -35,6 +35,7 @@ import com.pbo.telor.mapper.OrmawaMapper;
 import com.pbo.telor.model.OrmawaCommunityEntity;
 import com.pbo.telor.model.OrmawaEntity;
 import com.pbo.telor.model.UserEntity;
+import com.pbo.telor.repository.EventRepository;
 import com.pbo.telor.repository.OrmawaRepository;
 import com.pbo.telor.repository.UserRepository;
 
@@ -54,6 +55,9 @@ class OrmawaServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private EventRepository eventRepository;
 
     @BeforeEach
     void setUp() {
@@ -271,6 +275,7 @@ class OrmawaServiceTest {
         OrmawaEntity entity = mock(OrmawaEntity.class);
         when(ormawaRepository.findById(id)).thenReturn(Optional.of(entity));
         when(entity.getUser()).thenReturn(null);
+        when(entity.getEvents()).thenReturn(List.of()); 
 
         ormawaService.deleteOrmawa(id);
 
