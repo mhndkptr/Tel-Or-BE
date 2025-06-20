@@ -9,15 +9,13 @@ import org.springframework.stereotype.Service;
 
 import com.pbo.telor.dto.request.OrmawaRequest;
 import com.pbo.telor.dto.response.OrmawaResponse;
-import com.pbo.telor.enums.OrmawaCategory;
 import com.pbo.telor.exception.NotFoundException;
 import com.pbo.telor.mapper.OrmawaMapper;
-import com.pbo.telor.model.OrmawaCommunityEntity;
 import com.pbo.telor.model.OrmawaEntity;
 import com.pbo.telor.model.OrmawaLaboratoryEntity;
-import com.pbo.telor.model.OrmawaOrganizationEntity;
 import com.pbo.telor.model.OrmawaUKMEntity;
 import com.pbo.telor.model.UserEntity;
+import com.pbo.telor.repository.EventRepository;
 import com.pbo.telor.repository.OrmawaRepository;
 import com.pbo.telor.repository.UserRepository;
 
@@ -29,6 +27,7 @@ public class OrmawaService {
 
     private final UserRepository userRepository;
     private final OrmawaRepository ormawaRepository;
+    private final EventRepository eventRepository;
     private final UploadService uploadService;
     private final OrmawaMapper ormawaMapper;
 
@@ -127,6 +126,11 @@ public class OrmawaService {
             // save user supaya FK null
             userRepository.save(user);
         }
+
+        if (ormawa.getEvents() != null) {
+            eventRepository.deleteAll(ormawa.getEvents());
+        }
+
         ormawaRepository.deleteById(id);
     }
 }
